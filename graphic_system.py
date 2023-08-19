@@ -22,6 +22,7 @@ class GraphicSystem:
         return xvp, yvp
 
     def draw_display_file(self):
+        self.viewport_canvas.delete("all")
         for obj in self.display_file:
             points_list = obj.get_points()
             if len(points_list) > 1:
@@ -32,7 +33,7 @@ class GraphicSystem:
             else:
                 x, y = self.viewport_transformation(points_list[0])
                 self.viewport_canvas.create_oval(x-3, y-3, x+3, y+3, fill="black")
-        self.viewport_canvas.pack(fill=BOTH, expand=1)
+        self.viewport_canvas.update()
 
     def test(self):
         line = Line("linha1", 600, 0, 600, 600)
@@ -41,3 +42,27 @@ class GraphicSystem:
         self.display_file.append(wireframe)
         point = Point("point1", 700, 700)
         self.display_file.append(point)
+
+    def move_up(self):
+        self.window.move_up()
+        self.draw_display_file()
+
+    def move_down(self):
+        self.window.move_down()
+        self.draw_display_file()
+
+    def move_left(self):
+        self.window.move_left()
+        self.draw_display_file()
+
+    def move_right(self):
+        self.window.move_right()
+        self.draw_display_file()
+
+    def zoom_in(self):
+        self.window.zoom_in()
+        self.draw_display_file()
+
+    def zoom_out(self):
+        self.window.zoom_out()
+        self.draw_display_file()

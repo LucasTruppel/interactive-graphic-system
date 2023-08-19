@@ -143,28 +143,22 @@ class GraphicInterface:
         pass
 
     def move_up(self):
-        # Implement move up logic here
-        pass
+        self.graphic_system.move_up()
 
     def move_down(self):
-        # Implement move down logic here
-        pass
+        self.graphic_system.move_down()
 
     def move_left(self):
-        # Implement move left logic here
-        pass
+        self.graphic_system.move_left()
 
     def move_right(self):
-        # Implement move right logic here
-        pass
+        self.graphic_system.move_right()
 
     def zoom_in(self):
-        # Implement zoom in logic here
-        pass
+        self.graphic_system.zoom_in()
 
     def zoom_out(self):
-        # Implement zoom out logic here
-        pass
+        self.graphic_system.zoom_out()
 
     def create_left_frame(self, parent_frame):
         add_shape_button = Button(parent_frame, text="Add Shape",
