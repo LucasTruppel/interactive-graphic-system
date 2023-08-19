@@ -62,9 +62,9 @@ class GraphicInterface:
                               relief="solid", highlightbackground="red")
         buttons_frame.pack(fill=X)
 
-        add_shape_button = Button(
-            buttons_frame, text="Add Shape", command=self.add_shape)
-        add_shape_button.pack()
+        open_popup_button = Button(
+            buttons_frame, text="Add Shape", command=self.open_popup)
+        open_popup_button.pack()
 
         remove_button = Button(
             buttons_frame, text="Remove Shape", command=self.remove_shape)
@@ -72,7 +72,7 @@ class GraphicInterface:
 
     def create_camera_controls_frame(self, parent_frame):
         camera_controls_frame = Frame(parent_frame)
-        camera_controls_frame.pack(fill=X)
+        camera_controls_frame.pack(fill=BOTH)
 
         up_button = Button(camera_controls_frame,
                            text="⬆️", command=self.move_up)
@@ -104,7 +104,39 @@ class GraphicInterface:
         popup_window = Toplevel(self.main_window)
         popup_window.title("Popup Window")
 
-        # You can add elements to the popup window here in the future
+        # Frame for the list of points
+        points_frame = Frame(popup_window)
+        points_frame.pack(fill=BOTH, padx=10, pady=10)
+
+        points_listbox = Listbox(points_frame, selectmode=SINGLE)
+        points_listbox.pack(fill=BOTH, expand=True)
+
+        # Frame for entering coordinates and adding points
+        entry_frame = Frame(popup_window)
+        entry_frame.pack(fill=X, padx=10, pady=(0, 10))
+
+        x_entry = Entry(entry_frame)
+        y_entry = Entry(entry_frame)
+
+        x_entry.pack(side=LEFT, padx=(0, 10))
+        y_entry.pack(side=LEFT, padx=(0, 10))
+
+        add_button = Button(entry_frame, text="Add Point",
+                            command=self.add_point)
+        add_button.pack(side=LEFT)
+
+        # Button to remove selected point
+        remove_button = Button(
+            popup_window, text="Remove Selected Point", command=self.remove_point)
+        remove_button.pack()
+
+    def add_point(self):
+        # Implement adding a point to the list logic here
+        pass
+
+    def remove_point(self):
+        # Implement removing a selected point from the list logic here
+        pass
 
     def remove_shape(self):
         # Implement shape removal logic here
