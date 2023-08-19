@@ -27,10 +27,18 @@ class Window:
         self.x_max += shift
 
     def zoom_in(self):
-        self.x_max -= int(0.2 * abs(self.x_max - self.x_min))
-        self.y_max -= int(0.2 * abs(self.y_max - self.y_min))
+        x_dif = int(0.1 * abs(self.x_max - self.x_min))
+        self.x_min += x_dif
+        self.x_max -= x_dif
+        y_dif = int(0.1 * abs(self.y_max - self.y_min))
+        self.y_min += y_dif
+        self.y_max -= y_dif
 
     def zoom_out(self):
-        self.x_max += int(0.2 * abs(self.x_max - self.x_min))
-        self.y_max += int(0.2 * abs(self.y_max - self.y_min))
+        x_dif = int(0.1 * abs(self.x_max - self.x_min))
+        self.x_min -= x_dif
+        self.x_max += x_dif
+        y_dif = int(0.1 * abs(self.y_max - self.y_min))
+        self.y_min -= y_dif
+        self.y_max += y_dif
 
