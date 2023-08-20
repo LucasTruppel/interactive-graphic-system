@@ -28,7 +28,7 @@ class GraphicInterface:
 
     def create_interface(self):
         left_frame = Frame(self.main_window)
-        left_frame.pack(side=LEFT, padx=10, pady=10)
+        left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH, expand=True)
 
         self.create_objects_list_frame(left_frame)
         self.create_buttons_frame(left_frame)
@@ -61,12 +61,21 @@ class GraphicInterface:
         objects_list_frame = Frame(parent_frame)
         objects_list_frame.pack(fill=X)
 
-        # Add your list of objects to the objects_list_frame
+        items_frame = Frame(objects_list_frame)
+        items_frame.pack(fill=BOTH, expand=True)
+
+        items_listbox = Listbox(items_frame, selectmode=SINGLE)
+        items_listbox.pack(fill=BOTH, expand=True)
+
+        # TODO substituir pelo codigo correto para pegar as formas ja desenhadas
+        items = ["Shape 1", "Shape 2", "Shape 3"]
+        for item in items:
+            items_listbox.insert(END, item)
 
     def create_buttons_frame(self, parent_frame):
         buttons_frame = Frame(parent_frame, borderwidth=2,
                               relief=SOLID, padx=10, pady=10)
-        buttons_frame.pack(fill=X, expand=True)
+        buttons_frame.pack(fill=X, expand=True, anchor=N)
 
         add_shape_button = Button(
             buttons_frame, text="Add Shape", command=self.add_shape_popup)
@@ -90,10 +99,10 @@ class GraphicInterface:
         right_button = Button(camera_controls_frame,
                               text="➡️", command=self.move_right)
 
-        up_button.grid(row=0, column=1, padx=2, pady=2, sticky="n")
-        down_button.grid(row=2, column=1, padx=2, pady=2, sticky="s")
-        left_button.grid(row=1, column=0, padx=2, pady=2)
-        right_button.grid(row=1, column=2,  padx=2, pady=2)
+        up_button.grid(row=0, column=1, padx=5, pady=5, sticky=N,)
+        down_button.grid(row=2, column=1, padx=5, pady=5, sticky=S)
+        left_button.grid(row=1, column=0, padx=5, pady=5, sticky=W)
+        right_button.grid(row=1, column=2,  padx=5, pady=5, sticky=E)
 
     def create_zoom_controls_frame(self, parent_frame):
         zoom_controls_frame = Frame(
