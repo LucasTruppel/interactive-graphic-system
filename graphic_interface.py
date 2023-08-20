@@ -129,7 +129,7 @@ class GraphicInterface:
 
         # Button to remove selected point
         remove_button = Button(
-            popup_window, text="Remove Selected Point", command=self.remove_point)
+            popup_window, text="Remove Selected Point", command=lambda: self.remove_point(points_listbox, points_list))
         remove_button.pack()
 
         create_button = Button(
@@ -142,7 +142,7 @@ class GraphicInterface:
             y = float(y_entry.get())
             if (x, y) not in points_list:
                 points_list.append((x, y))
-                points_listbox.insert("end", f"({x}, {y})")
+                points_listbox.insert("end", f"({x:g}, {y:g})")
             else:
                 messagebox.showerror("Add Point Error", "Point already registered")
             x_entry.delete(0, END)
@@ -153,9 +153,13 @@ class GraphicInterface:
             else:
                 messagebox.showerror("Add Point Error", "Invalid character")
 
-    def remove_point(self):
-        # Implement removing a selected point from the list logic here
-        pass
+    def remove_point(self, points_listbox, points_list):
+        if len(points_listbox.curselection()) == 0:
+            messagebox.showerror("Remove Point Error", "Select a point")
+        else:
+            pos = points_listbox.curselection()[0]
+            points_listbox.delete(pos)
+            points_list.pop(pos)
 
     def remove_shape(self):
         # Implement shape removal logic here
