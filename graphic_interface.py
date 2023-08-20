@@ -38,13 +38,18 @@ class GraphicInterface:
         right_frame = Frame(self.main_window)
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
 
-        viewport_width = int(self.WIDTH * 0.75)
-        viewport_height = self.HEIGHT // 2
-        viewport_canvas = Canvas(
-            right_frame, width=viewport_width, height=viewport_height)
-        viewport_canvas.pack()
+        viewport_margin = 15
+        viewport_frame = Frame(
+            right_frame, padx=viewport_margin, pady=viewport_margin)
+        viewport_frame.pack(fill=BOTH, expand=True)
 
-        console_text = Text(right_frame, height=5,
+        viewport_width = int(self.WIDTH * 0.75) - 2 * viewport_margin
+        viewport_height = self.HEIGHT * 0.8 - 2 * viewport_margin
+        viewport_canvas = Canvas(
+            viewport_frame, width=viewport_width, height=viewport_height, borderwidth=2, relief="solid")
+        viewport_canvas.pack(fill=BOTH, expand=True)
+
+        console_text = Text(right_frame, height=self.HEIGHT * 0.2,
                             width=50, wrap=WORD)
         console_text.pack(side=BOTTOM, fill=BOTH)
 
@@ -60,20 +65,21 @@ class GraphicInterface:
 
     def create_buttons_frame(self, parent_frame):
         buttons_frame = Frame(parent_frame, borderwidth=2,
-                              relief="solid", highlightbackground="red")
-        buttons_frame.pack(fill=X)
+                              relief=SOLID, padx=10, pady=10)
+        buttons_frame.pack(fill=X, expand=True)
 
         add_shape_button = Button(
             buttons_frame, text="Add Shape", command=self.add_shape_popup)
-        add_shape_button.pack()
+        add_shape_button.pack(pady=2)
 
         remove_button = Button(
             buttons_frame, text="Remove Shape", command=self.remove_shape)
-        remove_button.pack()
+        remove_button.pack(pady=2)
 
     def create_camera_controls_frame(self, parent_frame):
-        camera_controls_frame = Frame(parent_frame)
-        camera_controls_frame.pack(fill=BOTH)
+        camera_controls_frame = Frame(
+            parent_frame, borderwidth=2, relief=SOLID, padx=10, pady=10)
+        camera_controls_frame.pack(ipadx=10, ipady=10)
 
         up_button = Button(camera_controls_frame,
                            text="⬆️", command=self.move_up)
@@ -84,13 +90,14 @@ class GraphicInterface:
         right_button = Button(camera_controls_frame,
                               text="➡️", command=self.move_right)
 
-        up_button.grid(row=0, column=1)
-        down_button.grid(row=2, column=1)
-        left_button.grid(row=1, column=0)
-        right_button.grid(row=1, column=2)
+        up_button.grid(row=0, column=1, padx=2, pady=2, sticky="n")
+        down_button.grid(row=2, column=1, padx=2, pady=2, sticky="s")
+        left_button.grid(row=1, column=0, padx=2, pady=2)
+        right_button.grid(row=1, column=2,  padx=2, pady=2)
 
     def create_zoom_controls_frame(self, parent_frame):
-        zoom_controls_frame = Frame(parent_frame)
+        zoom_controls_frame = Frame(
+            parent_frame, borderwidth=2, relief=SOLID, padx=10, pady=10)
         zoom_controls_frame.pack(fill=X)
 
         zoom_in_button = Button(zoom_controls_frame,
@@ -144,12 +151,14 @@ class GraphicInterface:
                 points_list.append((x, y))
                 points_listbox.insert("end", f"({x:g}, {y:g})")
             else:
-                messagebox.showerror("Add Point Error", "Point already registered")
+                messagebox.showerror(
+                    "Add Point Error", "Point already registered")
             x_entry.delete(0, END)
             y_entry.delete(0, END)
         except ValueError:
             if x_entry.get() == "" or y_entry.get() == "":
-                messagebox.showerror("Add Point Error", "Point must be specified")
+                messagebox.showerror(
+                    "Add Point Error", "Point must be specified")
             else:
                 messagebox.showerror("Add Point Error", "Invalid character")
 
@@ -170,7 +179,8 @@ class GraphicInterface:
             self.graphic_system.create_shape(points_list)
             popup_window.destroy()
         else:
-            messagebox.showerror("Create Shape Error", "At least one point is needed")
+            messagebox.showerror("Create Shape Error",
+                                 "At least one point is needed")
 
     def move_up(self):
         self.graphic_system.move_up()
