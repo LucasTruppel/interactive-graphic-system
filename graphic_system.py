@@ -66,3 +66,16 @@ class GraphicSystem:
     def zoom_out(self):
         self.window.zoom_out()
         self.draw_display_file()
+
+    def create_shape(self, points_list: list[tuple[float, float]]):
+        match len(points_list):
+            case 1:
+                x, y = points_list[0]
+                self.display_file.append(Point("point", x, y))
+            case 2:
+                x1, y1 = points_list[0]
+                x2, y2 = points_list[1]
+                self.display_file.append(Line("line", x1, y1, x2, y2))
+            case default:
+                self.display_file.append(Wireframe("wireframe", points_list))
+        self.draw_display_file()

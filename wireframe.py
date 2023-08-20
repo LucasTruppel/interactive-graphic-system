@@ -3,7 +3,7 @@ from point import Point
 
 
 class Wireframe(GraphicObject):
-    def __init__(self, name: str, coordinates_list: list[tuple[int, int]]):
+    def __init__(self, name: str, coordinates_list: list[tuple[float, float]]):
         super().__init__(name)
         self.points = []
         for i in range(len(coordinates_list)):

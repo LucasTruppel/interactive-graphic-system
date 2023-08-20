@@ -3,7 +3,7 @@ from point import Point
 
 
 class Line(GraphicObject):
-    def __init__(self, name: str, x1: int, y1: int, x2: int, y2: int):
+    def __init__(self, name: str, x1: float, y1: float, x2: float, y2: float):
         super().__init__(name)
         self.points = [Point(name+" point1", x1,  y1), Point(name+" point2", x2, y2)]
 

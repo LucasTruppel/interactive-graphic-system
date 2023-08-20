@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from graphic_system import GraphicSystem
 
 
@@ -62,9 +63,9 @@ class GraphicInterface:
                               relief="solid", highlightbackground="red")
         buttons_frame.pack(fill=X)
 
-        open_popup_button = Button(
-            buttons_frame, text="Add Shape", command=self.open_popup)
-        open_popup_button.pack()
+        add_shape_button = Button(
+            buttons_frame, text="Add Shape", command=self.add_shape_popup)
+        add_shape_button.pack()
 
         remove_button = Button(
             buttons_frame, text="Remove Shape", command=self.remove_shape)
@@ -100,9 +101,9 @@ class GraphicInterface:
         zoom_in_button.pack(side=LEFT, padx=10)
         zoom_out_button.pack(side=RIGHT, padx=10)
 
-    def open_popup(self):
+    def add_shape_popup(self):
         popup_window = Toplevel(self.main_window)
-        popup_window.title("Popup Window")
+        popup_window.title("Add Shape")
 
         # Frame for the list of points
         points_frame = Frame(popup_window)
@@ -121,8 +122,9 @@ class GraphicInterface:
         x_entry.pack(side=LEFT, padx=(0, 10))
         y_entry.pack(side=LEFT, padx=(0, 10))
 
+        points_list = []
         add_button = Button(entry_frame, text="Add Point",
-                            command=self.add_point)
+                            command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list))
         add_button.pack(side=LEFT)
 
         # Button to remove selected point
@@ -130,9 +132,26 @@ class GraphicInterface:
             popup_window, text="Remove Selected Point", command=self.remove_point)
         remove_button.pack()
 
-    def add_point(self):
-        # Implement adding a point to the list logic here
-        pass
+        create_button = Button(
+            popup_window, text="Create Shape", command=lambda: self.create_shape(points_list, popup_window))
+        create_button.pack()
+
+    def add_point(self, x_entry, y_entry, points_listbox, points_list):
+        try:
+            x = float(x_entry.get())
+            y = float(y_entry.get())
+            if (x, y) not in points_list:
+                points_list.append((x, y))
+                points_listbox.insert("end", f"({x}, {y})")
+            else:
+                messagebox.showerror("Add Point Error", "Point already registered")
+            x_entry.delete(0, END)
+            y_entry.delete(0, END)
+        except ValueError:
+            if x_entry.get() == "" or y_entry.get() == "":
+                messagebox.showerror("Add Point Error", "Point must be specified")
+            else:
+                messagebox.showerror("Add Point Error", "Invalid character")
 
     def remove_point(self):
         # Implement removing a selected point from the list logic here
@@ -141,6 +160,13 @@ class GraphicInterface:
     def remove_shape(self):
         # Implement shape removal logic here
         pass
+
+    def create_shape(self, points_list: list[tuple[float, float]], popup_window: Toplevel):
+        if len(points_list) > 0:
+            self.graphic_system.create_shape(points_list)
+            popup_window.destroy()
+        else:
+            messagebox.showerror("Create Shape Error", "At least one point is needed")
 
     def move_up(self):
         self.graphic_system.move_up()
