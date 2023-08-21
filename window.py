@@ -1,32 +1,32 @@
 class Window:
 
-    def __init__(self, x_min, y_min, x_max, y_max):
+    def __init__(self, x_min, y_min, x_max, y_max) -> None:
         self.x_min = x_min
         self.y_min = y_min
         self.x_max = x_max
         self.y_max = y_max
 
-    def move_up(self):
+    def move_up(self) -> None:
         shift = int(0.2*abs(self.y_max - self.y_min))
         self.y_min += shift
         self.y_max += shift
 
-    def move_down(self):
+    def move_down(self) -> None:
         shift = int(0.2 * abs(self.y_max - self.y_min))
         self.y_min -= shift
         self.y_max -= shift
 
-    def move_left(self):
+    def move_left(self) -> None:
         shift = int(0.2 * abs(self.x_max - self.x_min))
         self.x_min -= shift
         self.x_max -= shift
 
-    def move_right(self):
+    def move_right(self) -> None:
         shift = int(0.2 * abs(self.x_max - self.x_min))
         self.x_min += shift
         self.x_max += shift
 
-    def zoom_in(self):
+    def zoom_in(self) -> None:
         x_dif = int(0.1 * abs(self.x_max - self.x_min))
         self.x_min += x_dif
         self.x_max -= x_dif
@@ -34,7 +34,7 @@ class Window:
         self.y_min += y_dif
         self.y_max -= y_dif
 
-    def zoom_out(self):
+    def zoom_out(self) -> None:
         x_dif = int(0.1 * abs(self.x_max - self.x_min))
         self.x_min -= x_dif
         self.x_max += x_dif
