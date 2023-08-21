@@ -11,6 +11,7 @@ class GraphicInterface:
 
         self.main_window = Tk()
         self.items_listbox = None
+        self.console_text = None
         self.init_tkinter()
 
     def init_tkinter(self) -> None:
@@ -47,11 +48,10 @@ class GraphicInterface:
             viewport_frame, width=viewport_width, height=viewport_height, borderwidth=2, relief="solid")
         viewport_canvas.pack(fill=BOTH, expand=True)
 
-        console_text = Text(right_frame, height=self.HEIGHT * 0.2,
+        self.console_text = Text(right_frame, height=self.HEIGHT * 0.2,
                             width=50, wrap=WORD)
-        console_text.pack(side=BOTTOM, fill=BOTH)
+        self.console_text.pack(side=BOTTOM, fill=BOTH)
 
-        self.console_text = console_text
         self.graphic_system = GraphicSystem(
             viewport_width, viewport_height, viewport_canvas)
 
@@ -182,7 +182,8 @@ class GraphicInterface:
         else:
             pos = self.items_listbox.curselection()[0]
             self.items_listbox.delete(pos)
-            self.graphic_system.remove_shape(pos)
+            name = self.graphic_system.remove_shape(pos)
+            self.log(f'Shape "{name}" deleted.')
 
     def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, popup_window: Toplevel) -> None:
         name = name_entry.get()
@@ -191,12 +192,20 @@ class GraphicInterface:
                 self.graphic_system.create_shape(points_list, name)
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
+                self.log(f'Shape "{name}" created with points: {self.format_point_list(points_list)}.')
             else:
                 messagebox.showerror("Create Shape Error",
                                      "Shape name must be specified")
         else:
             messagebox.showerror("Create Shape Error",
                                  "At least one point is needed")
+
+    def format_point_list(self, points_list: list[tuple[float, float]]) -> str:
+        return (str(points_list)
+                .replace("[", "")
+                .replace("]", "")
+                .replace(".0,", ",")
+                .replace(".0)", ")"))
 
     def move_up(self) -> None:
         self.graphic_system.move_up()
@@ -215,3 +224,7 @@ class GraphicInterface:
 
     def zoom_out(self) -> None:
         self.graphic_system.zoom_out()
+
+    def log(self, text: str) -> None:
+        self.console_text.insert("end", text + "\n")
+        self.console_text.see("end")

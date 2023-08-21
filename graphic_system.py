@@ -72,6 +72,8 @@ class GraphicSystem:
                 self.display_file.append(Wireframe(name, points_list))
         self.draw_display_file()
 
-    def remove_shape(self, pos: int) -> None:
+    def remove_shape(self, pos: int) -> str:
+        name = self.display_file[pos].name
         self.display_file.pop(pos)
         self.draw_display_file()
+        return name
