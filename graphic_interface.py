@@ -50,7 +50,7 @@ class GraphicInterface:
         viewport_canvas.pack(fill=BOTH, expand=True)
 
         self.console_text = Text(right_frame, height=self.HEIGHT * 0.2,
-                            width=50, wrap=WORD)
+                                 width=50, wrap=WORD)
         self.console_text.pack(side=BOTTOM, fill=BOTH)
 
         self.graphic_system = GraphicSystem(
@@ -68,9 +68,8 @@ class GraphicInterface:
         scrollbar.config(command=self.items_listbox.yview)
 
     def create_buttons_frame(self, parent_frame: Frame) -> None:
-        buttons_frame = Frame(parent_frame, borderwidth=2,
-                              relief=SOLID, padx=10, pady=10)
-        buttons_frame.pack(fill=X, expand=True, anchor=N)
+        buttons_frame = Frame(parent_frame, padx=10, pady=10)
+        buttons_frame.pack()
 
         add_shape_button = Button(
             buttons_frame, text="Add Shape", command=self.add_shape_popup)
@@ -82,7 +81,7 @@ class GraphicInterface:
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
         camera_controls_frame = Frame(
-            parent_frame, borderwidth=2, relief=SOLID, padx=10, pady=10)
+            parent_frame, padx=10, pady=10)
         camera_controls_frame.pack(ipadx=10, ipady=10)
 
         up_button = Button(camera_controls_frame,
@@ -94,15 +93,17 @@ class GraphicInterface:
         right_button = Button(camera_controls_frame,
                               text="➡️", command=self.move_right)
 
-        up_button.grid(row=0, column=1, padx=5, pady=5, sticky=N,)
-        down_button.grid(row=2, column=1, padx=5, pady=5, sticky=S)
-        left_button.grid(row=1, column=0, padx=5, pady=5, sticky=W)
-        right_button.grid(row=1, column=2,  padx=5, pady=5, sticky=E)
+        button_padding = 5
+
+        up_button.pack(side=TOP, padx=button_padding, pady=button_padding)
+        down_button.pack(side=BOTTOM, padx=button_padding, pady=button_padding)
+        left_button.pack(side=LEFT, padx=button_padding, pady=button_padding)
+        right_button.pack(side=RIGHT, padx=button_padding, pady=button_padding)
 
     def create_zoom_controls_frame(self, parent_frame: Frame) -> None:
         zoom_controls_frame = Frame(
-            parent_frame, borderwidth=2, relief=SOLID, padx=10, pady=10)
-        zoom_controls_frame.pack(fill=X)
+            parent_frame, padx=10, pady=10)
+        zoom_controls_frame.pack()
 
         zoom_in_button = Button(zoom_controls_frame,
                                 text="Zoom In", command=self.zoom_in)
@@ -132,7 +133,7 @@ class GraphicInterface:
         entry_frame = Frame(popup_window)
         entry_frame.pack(fill=X, padx=10, pady=(0, 10))
 
-        x_entry = EntryWithPlaceholder(entry_frame , "x")
+        x_entry = EntryWithPlaceholder(entry_frame, "x")
         y_entry = EntryWithPlaceholder(entry_frame, "y")
 
         x_entry.pack(side=LEFT, padx=(0, 10))
@@ -145,7 +146,7 @@ class GraphicInterface:
 
         # Button to remove selected point
         remove_button = Button(
-            popup_window, text="Remove Selected Point", width=25,command=lambda: self.remove_point(points_listbox, points_list))
+            popup_window, text="Remove Selected Point", width=25, command=lambda: self.remove_point(points_listbox, points_list))
         remove_button.pack(pady=(0, 10))
 
         name_entry = EntryWithPlaceholder(popup_window, "Name")
@@ -156,11 +157,11 @@ class GraphicInterface:
 
         cancel_button = Button(
             popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
-        cancel_button.pack(side=LEFT, padx=(0,5), expand=True, fill="both")
+        cancel_button.pack(side=LEFT, padx=(0, 5), expand=True, fill="both")
 
         create_button = Button(
             popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, popup_window))
-        create_button.pack(side=LEFT, padx=(5,0), expand=True, fill="both")
+        create_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
 
     def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:
@@ -206,7 +207,8 @@ class GraphicInterface:
                 self.graphic_system.create_shape(points_list, name)
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
-                self.log(f'Shape "{name}" created with points: {self.format_point_list(points_list)}.')
+                self.log(
+                    f'Shape "{name}" created with points: {self.format_point_list(points_list)}.')
             else:
                 messagebox.showerror("Create Shape Error",
                                      "Shape name must be specified")
