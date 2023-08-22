@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+from entry_with_placeholder import EntryWithPlaceholder
 from graphic_system import GraphicSystem
 
 
@@ -125,8 +126,8 @@ class GraphicInterface:
         entry_frame = Frame(popup_window)
         entry_frame.pack(fill=X, padx=10, pady=(0, 10))
 
-        x_entry = Entry(entry_frame)
-        y_entry = Entry(entry_frame)
+        x_entry = EntryWithPlaceholder(entry_frame , "x")
+        y_entry = EntryWithPlaceholder(entry_frame, "y")
 
         x_entry.pack(side=LEFT, padx=(0, 10))
         y_entry.pack(side=LEFT, padx=(0, 10))
@@ -141,14 +142,14 @@ class GraphicInterface:
             popup_window, text="Remove Selected Point", command=lambda: self.remove_point(points_listbox, points_list))
         remove_button.pack()
 
-        name_entry = Entry(popup_window)
+        name_entry = EntryWithPlaceholder(popup_window, "Name")
         name_entry.pack()
 
         create_button = Button(
             popup_window, text="Create Shape", command=lambda: self.create_shape(points_list, name_entry, popup_window))
         create_button.pack()
 
-    def add_point(self, x_entry: Entry, y_entry: Entry, points_listbox: Listbox,
+    def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:
         try:
             x = float(x_entry.get())
@@ -159,8 +160,8 @@ class GraphicInterface:
             else:
                 messagebox.showerror(
                     "Add Point Error", "Point already registered")
-            x_entry.delete(0, END)
-            y_entry.delete(0, END)
+            x_entry.clear()
+            y_entry.clear()
         except ValueError:
             if x_entry.get() == "" or y_entry.get() == "":
                 messagebox.showerror(
