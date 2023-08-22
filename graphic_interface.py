@@ -114,6 +114,7 @@ class GraphicInterface:
     def add_shape_popup(self) -> None:
         popup_window = Toplevel(self.main_window)
         popup_window.title("Add Shape")
+        popup_window.resizable(False, False)
 
         # Frame for the list of points
         points_frame = Frame(popup_window)
@@ -135,19 +136,26 @@ class GraphicInterface:
         points_list = []
         add_button = Button(entry_frame, text="Add Point",
                             command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list))
-        add_button.pack(side=LEFT)
+        add_button.pack(side=LEFT, expand=True, fill='both')
 
         # Button to remove selected point
         remove_button = Button(
-            popup_window, text="Remove Selected Point", command=lambda: self.remove_point(points_listbox, points_list))
-        remove_button.pack()
+            popup_window, text="Remove Selected Point", width=25,command=lambda: self.remove_point(points_listbox, points_list))
+        remove_button.pack(pady=(0, 10))
 
         name_entry = EntryWithPlaceholder(popup_window, "Name")
-        name_entry.pack()
+        name_entry.pack(padx=10, pady=(0, 10), fill=X)
+
+        popup_buttons_frame = Frame(popup_window)
+        popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
+
+        cancel_button = Button(
+            popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
+        cancel_button.pack(side=LEFT, padx=(0,5), expand=True, fill="both")
 
         create_button = Button(
-            popup_window, text="Create Shape", command=lambda: self.create_shape(points_list, name_entry, popup_window))
-        create_button.pack()
+            popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, popup_window))
+        create_button.pack(side=LEFT, padx=(5,0), expand=True, fill="both")
 
     def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:
