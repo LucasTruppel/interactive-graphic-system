@@ -57,14 +57,15 @@ class GraphicInterface:
             viewport_width, viewport_height, viewport_canvas)
 
     def create_objects_list_frame(self, parent_frame: Frame) -> None:
-        objects_list_frame = Frame(parent_frame)
-        objects_list_frame.pack(fill=X)
-
-        items_frame = Frame(objects_list_frame)
+        items_frame = Frame(parent_frame)
         items_frame.pack(fill=BOTH, expand=True)
 
         self.items_listbox = Listbox(items_frame, selectmode=SINGLE)
-        self.items_listbox.pack(fill=BOTH, expand=True)
+        self.items_listbox.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollbar = Scrollbar(items_frame)
+        scrollbar.pack(side=RIGHT, fill=BOTH)
+        self.items_listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=self.items_listbox.yview)
 
     def create_buttons_frame(self, parent_frame: Frame) -> None:
         buttons_frame = Frame(parent_frame, borderwidth=2,
@@ -121,7 +122,11 @@ class GraphicInterface:
         points_frame.pack(fill=BOTH, padx=10, pady=10)
 
         points_listbox = Listbox(points_frame, selectmode=SINGLE)
-        points_listbox.pack(fill=BOTH, expand=True)
+        points_listbox.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollbar = Scrollbar(points_frame)
+        scrollbar.pack(side=RIGHT, fill=BOTH)
+        points_listbox.config(yscrollcommand=scrollbar.set)
+        scrollbar.config(command=points_listbox.yview)
 
         # Frame for entering coordinates and adding points
         entry_frame = Frame(popup_window)
@@ -197,7 +202,7 @@ class GraphicInterface:
     def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, popup_window: Toplevel) -> None:
         name = name_entry.get()
         if len(points_list) > 0:
-            if name != "":
+            if name != "" and name != "Name":
                 self.graphic_system.create_shape(points_list, name)
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
