@@ -13,6 +13,8 @@ class GraphicInterface:
         self.main_window = Tk()
         self.items_listbox = None
         self.console_text = None
+        self.graphic_system = None
+
         self.init_tkinter()
 
     def init_tkinter(self) -> None:
@@ -50,7 +52,7 @@ class GraphicInterface:
         viewport_canvas.pack(fill=BOTH, expand=True)
 
         self.console_text = Text(right_frame, height=self.HEIGHT * 0.2,
-                                 width=50, wrap=WORD)
+                                 width=50, wrap=WORD, state="disabled")
         self.console_text.pack(side=BOTTOM, fill=BOTH)
 
         self.graphic_system = GraphicSystem(
@@ -242,5 +244,7 @@ class GraphicInterface:
         self.graphic_system.zoom_out()
 
     def log(self, text: str) -> None:
+        self.console_text.configure(state="normal")
         self.console_text.insert("end", text + "\n")
         self.console_text.see("end")
+        self.console_text.configure(state="disabled")

@@ -7,7 +7,7 @@ from wireframe import Wireframe
 
 class GraphicSystem:
 
-    def __init__(self, width: int, height: int, viewport_canvas: Canvas) -> None:
+    def __init__(self, width: float, height: float, viewport_canvas: Canvas) -> None:
         self.display_file = []
         self.window = Window(0, 0, width, height)
         self.viewport = Viewport(0, 0, width, height)
