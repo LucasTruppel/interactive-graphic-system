@@ -3,6 +3,7 @@ from viewport import Viewport
 from line import *
 from tkinter import Canvas, BOTH
 from wireframe import Wireframe
+import numpy as np
 
 
 class GraphicSystem:
@@ -25,14 +26,22 @@ class GraphicSystem:
         self.viewport_canvas.delete("all")
         for obj in self.display_file:
             points_list = obj.get_points()
-            if len(points_list) > 1:
-                for i in range(len(points_list)-1):
-                    x1, y1 = self.viewport_transformation(points_list[i])
-                    x2, y2 = self.viewport_transformation(points_list[i+1])
+            match len(points_list):
+                case 1:
+                    x, y = self.viewport_transformation(points_list[0])
+                    self.viewport_canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="black")
+                case 2:
+                    x1, y1 = self.viewport_transformation(points_list[0])
+                    x2, y2 = self.viewport_transformation(points_list[1])
                     self.viewport_canvas.create_line(x1, y1, x2, y2)
-            else:
-                x, y = self.viewport_transformation(points_list[0])
-                self.viewport_canvas.create_oval(x-3, y-3, x+3, y+3, fill="black")
+                case default:
+                    for i in range(len(points_list)-1):
+                        x1, y1 = self.viewport_transformation(points_list[i])
+                        x2, y2 = self.viewport_transformation(points_list[i+1])
+                        self.viewport_canvas.create_line(x1, y1, x2, y2)
+                    x1, y1 = self.viewport_transformation(points_list[len(points_list)-1])
+                    x2, y2 = self.viewport_transformation(points_list[0])
+                    self.viewport_canvas.create_line(x1, y1, x2, y2)
         self.viewport_canvas.update()
 
     def move_up(self) -> None:
@@ -77,3 +86,32 @@ class GraphicSystem:
         self.display_file.pop(pos)
         self.draw_display_file()
         return name
+
+    def transform(self, graphic_object: GraphicObject, matrix: np.array):
+        points_list = graphic_object.get_points()
+        for point in points_list:
+            point_matrix = np.array([point.x, point.y, 1])
+            new_point_matrix = np.dot(point_matrix, matrix)
+            point.x = new_point_matrix[0]
+            point.y = new_point_matrix[1]
+        self.draw_display_file()
+
+    def get_translation_matrix(self, dx: float, dy: float):
+        return np.array([[1, 0, 0], [0, 1, 0], [dx, dy, 1]])
+
+    def get_object_center(self, graphic_object: GraphicObject):
+        points_list = graphic_object.get_points()
+        x_sum = 0
+        y_sum = 0
+        for point in points_list:
+            x_sum += point.x
+            y_sum += point.y
+        n = len(points_list)
+        return x_sum/n, y_sum/n
+
+    def get_scaling_matrix(self, graphic_object: GraphicObject, sx: float, sy: float):
+        xc, yc = self.get_object_center(graphic_object)
+        return np.array([[sx, 0, 0], [0, sy, 0], [xc-xc*sx, yc-yc*sy, 0]])
+
+    def test(self, pos: int):
+        self.transform(self.display_file[pos], self.get_scaling_matrix(self.display_file[pos], 2, 2))

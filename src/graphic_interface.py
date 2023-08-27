@@ -77,9 +77,17 @@ class GraphicInterface:
             buttons_frame, text="Add Shape", command=self.add_shape_popup)
         add_shape_button.pack(pady=2)
 
+        control_listbox_frame = Frame(buttons_frame)
+        control_listbox_frame.pack(padx=10, pady=(0, 10), fill=X)
+
         remove_button = Button(
-            buttons_frame, text="Remove Shape", command=self.remove_shape)
-        remove_button.pack(pady=2)
+            control_listbox_frame, text="Remove Shape", width=25, command=self.remove_shape)
+        remove_button.pack(side=LEFT, padx=(0, 5), expand=True, fill="both")
+
+        transform_button = Button(
+            control_listbox_frame, text="Transform Shape", width=25,
+            command=lambda: self.transform_popup())
+        transform_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
         camera_controls_frame = Frame(
@@ -248,3 +256,11 @@ class GraphicInterface:
         self.console_text.insert("end", text + "\n")
         self.console_text.see("end")
         self.console_text.configure(state="disabled")
+
+    def transform_popup(self):
+        if len(self.items_listbox.curselection()) == 0:
+            messagebox.showerror("Transform Shape", "Select a shape")
+        else:
+            pos = self.items_listbox.curselection()[0]
+            self.graphic_system.test(pos)
+
