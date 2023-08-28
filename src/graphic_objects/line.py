@@ -1,5 +1,5 @@
-from graphic_object import GraphicObject
-from point import Point
+from graphic_objects.graphic_object import GraphicObject
+from graphic_objects.point import Point
 
 
 class Line(GraphicObject):

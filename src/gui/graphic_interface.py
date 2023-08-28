@@ -1,8 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
-from entry_with_placeholder import EntryWithPlaceholder
-from graphic_system import GraphicSystem
-
+from gui.entry_with_placeholder import EntryWithPlaceholder
+from system.graphic_system import GraphicSystem
 
 
 class GraphicInterface:

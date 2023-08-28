@@ -1,11 +1,9 @@
-import math
-import numpy as np
-from window import Window
-from viewport import Viewport
-from line import *
-from tkinter import Canvas, BOTH
-from wireframe import Wireframe
-from transformation_handler import TransformationHandler
+from system.window import Window
+from system.viewport import Viewport
+from graphic_objects.line import *
+from tkinter import Canvas
+from graphic_objects.wireframe import Wireframe
+from system.transformation_handler import TransformationHandler
 
 
 class GraphicSystem:

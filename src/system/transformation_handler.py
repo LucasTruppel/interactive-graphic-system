@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from graphic_object import GraphicObject
+from graphic_objects.graphic_object import GraphicObject
 
 
 class TransformationHandler:
