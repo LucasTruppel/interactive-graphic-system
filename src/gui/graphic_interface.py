@@ -4,6 +4,7 @@ from entry_with_placeholder import EntryWithPlaceholder
 from graphic_system import GraphicSystem
 
 
+
 class GraphicInterface:
 
     def __init__(self) -> None:
@@ -87,7 +88,7 @@ class GraphicInterface:
 
         transform_button = Button(
             buttons_frame, text="Transform Shape",
-            command=lambda: self.transform_popup())
+            command=lambda: self.transform())
         transform_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
 
         remove_button = Button(
@@ -269,14 +270,14 @@ class GraphicInterface:
         self.console_text.see("end")
         self.console_text.configure(state="disabled")
 
-    # def transform_popup(self):
-    #     if len(self.items_listbox.curselection()) == 0:
-    #         messagebox.showerror("Transform Shape", "Select a shape")
-    #     else:
-    #         pos = self.items_listbox.curselection()[0]
-    #         self.graphic_system.test(pos)
+    def transform(self):
+        if len(self.items_listbox.curselection()) == 0:
+            messagebox.showerror("Transform Shape", "Select a shape")
+        else:
+            pos = self.items_listbox.curselection()[0]
+            self.transform_popup(pos)
 
-    def transform_popup(self):
+    def transform_popup(self, object_index: int):
         popup_window = Toplevel(self.main_window)
         popup_window.title("Transform Shape")
         popup_window.resizable(False, False)
@@ -285,6 +286,24 @@ class GraphicInterface:
         # Top frame
         main_popup_frame = Frame(popup_window)
         main_popup_frame.pack(fill=BOTH, expand=True)
+
+        # Right Column
+        right_column_frame = Frame(main_popup_frame)
+        right_column_frame.pack(side=RIGHT, fill=BOTH, expand=True)
+        right_column_frame.configure(bg="#333333")
+
+        # Operation list
+        operation_list_frame = Frame(right_column_frame)
+        operation_list_frame.pack(fill=X, padx=10, pady=(10, 0))
+        operation_list_frame.configure(bg="#333333")
+
+        operation_listbox = Listbox(operation_list_frame, selectmode=SINGLE)
+        operation_listbox.pack(side=LEFT, fill=BOTH, expand=True)
+
+        # Remove operation button
+        remove_operation_button = Button(
+            right_column_frame, text="Remove Operation", width=25, command=lambda: self.remove_operation(operation_listbox))
+        remove_operation_button.pack(padx=10, pady=(10, 0))
 
         # Left Column
         left_column_frame = Frame(main_popup_frame)
@@ -304,13 +323,13 @@ class GraphicInterface:
         translation_entry_frame.pack(side=LEFT, fill=X, expand=True)
         translation_entry_frame.configure(bg="#333333")
 
-        x_entry = EntryWithPlaceholder(translation_entry_frame, "x")
-        y_entry = EntryWithPlaceholder(translation_entry_frame, "y")
-        x_entry.pack(side=LEFT, padx=(0, 10))
-        y_entry.pack(side=LEFT, padx=(0, 10))
+        dx_entry = EntryWithPlaceholder(translation_entry_frame, "Dx")
+        dy_entry = EntryWithPlaceholder(translation_entry_frame, "Dy")
+        dx_entry.pack(side=LEFT, padx=(0, 10))
+        dy_entry.pack(side=LEFT, padx=(0, 10))
 
         add_translation_button = Button(
-            translation_frame, text="Add Translation")
+            translation_frame, text="Add Translation", command=lambda: self.add_translation(dx_entry, dy_entry, operation_listbox))
         add_translation_button.pack(side=LEFT, padx=(0, 10))
 
         # Scaling
@@ -326,12 +345,14 @@ class GraphicInterface:
         scaling_entry_frame.pack(side=LEFT, fill=X, expand=True)
         scaling_entry_frame.configure(bg="#333333")
 
-        x_entry = EntryWithPlaceholder(scaling_entry_frame, "x")
-        y_entry = EntryWithPlaceholder(scaling_entry_frame, "y")
-        x_entry.pack(side=LEFT, padx=(0, 10))
-        y_entry.pack(side=LEFT, padx=(0, 10))
+        sx_entry = EntryWithPlaceholder(scaling_entry_frame, "x")
+        sy_entry = EntryWithPlaceholder(scaling_entry_frame, "y")
+        sx_entry.pack(side=LEFT, padx=(0, 10))
+        sy_entry.pack(side=LEFT, padx=(0, 10))
 
-        add_scaling_button = Button(scaling_frame, text="Add Scaling")
+        add_scaling_button = Button(scaling_frame, text="Add Scaling",
+                                    command=lambda: self.add_scaling(object_index, sx_entry, sy_entry,
+                                                                     operation_listbox))
         add_scaling_button.pack(side=LEFT, padx=(0, 10))
 
         # Rotation
@@ -348,6 +369,7 @@ class GraphicInterface:
         rotation_radio_frame.configure(bg="#333333")
 
         self.selected_rotation = StringVar()
+        self.selected_rotation.set("object_center")
 
         world_center_radio_button = Radiobutton(
             rotation_radio_frame, text="World Center", variable=self.selected_rotation, value="world_center")
@@ -368,26 +390,9 @@ class GraphicInterface:
         x_entry.pack(side=LEFT, padx=(0, 10))
         y_entry.pack(side=LEFT, padx=(0, 10))
 
-        add_rotation_button = Button(rotation_frame, text="Add Rotation")
+        add_rotation_button = Button(rotation_frame, text="Add Rotation",
+                                     command=lambda: self.add_rotation(object_index, x_entry, y_entry, operation_listbox))
         add_rotation_button.pack(side=LEFT, padx=(0, 10))
-
-        # Right Column
-        right_column_frame = Frame(main_popup_frame)
-        right_column_frame.pack(side=RIGHT, fill=BOTH, expand=True)
-        right_column_frame.configure(bg="#333333")
-
-        # Operation list
-        operation_list_frame = Frame(right_column_frame)
-        operation_list_frame.pack(fill=X, padx=10, pady=(10, 0))
-        operation_list_frame.configure(bg="#333333")
-
-        operation_listbox = Listbox(operation_list_frame, selectmode=SINGLE)
-        operation_listbox.pack(side=LEFT, fill=BOTH, expand=True)
-
-        # Remove operation button
-        remove_operation_button = Button(
-            right_column_frame, text="Remove Operation", width=25, command=lambda: self.remove_operation)
-        remove_operation_button.pack(padx=10, pady=(10, 0))
 
         # Bottom ok and cancel buttons frame
 
@@ -396,17 +401,71 @@ class GraphicInterface:
         popup_buttons_frame.configure(bg="#333333")
 
         tramsform_button = Button(
-            popup_buttons_frame, text="Transform", width=25, command=lambda: self.transform_shape)
+            popup_buttons_frame, text="Transform", width=25, command=lambda: self.transform_shape(object_index, popup_window))
         tramsform_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
 
         cancel_button = Button(
             popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
         cancel_button.pack(side=LEFT, padx=(0, 5), expand=True, fill="both")
 
-    def remove_operation(self):
-        # TODO: remove operation
-        pass
+    def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder, operation_listbox: Listbox):
+        try:
+            dx = float(dx_entry.get())
+            dy = float(dy_entry.get())
+            self.graphic_system.add_translation(dx, dy)
+            operation_listbox.insert("end", f"Translation Dx:{dx:g} Dy:{dy:g}")
+            dx_entry.clear()
+            dy_entry.clear()
+        except ValueError as e:
+            if dx_entry.get() == "" or dy_entry.get() == "":
+                messagebox.showerror(
+                    "Add Translation Error", "Values must be specified")
+            else:
+                messagebox.showerror("Add Translation Error", "Invalid character")
 
-    def transform_shape(self):
-        # TODO: transform shape
-        pass
+    def add_scaling(self, object_index: int, sx_entry: EntryWithPlaceholder, sy_entry: EntryWithPlaceholder, operation_listbox: Listbox):
+        try:
+            sx = float(sx_entry.get())
+            sy = float(sy_entry.get())
+            self.graphic_system.add_scaling(object_index, sx, sy)
+            operation_listbox.insert("end", f"Scaling Sx:{sx:g} Sy:{sy:g}")
+            sx_entry.clear()
+            sy_entry.clear()
+        except ValueError as e:
+            if sx_entry.get() == "" or sy_entry.get() == "":
+                messagebox.showerror(
+                    "Add Scaling Error", "Values must be specified")
+            else:
+                messagebox.showerror("Add Scaling Error", "Invalid character")
+
+    def add_rotation(self, object_index: int, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, operation_listbox: Listbox):
+        rotation_type = self.selected_rotation.get()
+        if rotation_type == "arbitrary_point":
+            try:
+                x = float(x_entry.get())
+                y = float(y_entry.get())
+                self.graphic_system.add_rotation(x, y, 30, rotation_type, object_index)
+                operation_listbox.insert("end", f"Rotation x:{x:g} y:{y:g}")
+                x_entry.clear()
+                y_entry.clear()
+            except ValueError as e:
+                if x_entry.get() == "" or y_entry.get() == "":
+                    messagebox.showerror(
+                        "Add Rotation Error", "Values must be specified")
+                else:
+                    messagebox.showerror("Add Rotation Error", "Invalid character")
+        else:
+            operation_listbox.insert("end", f"Rotation: {rotation_type.replace('_',' ')}")
+            self.graphic_system.add_rotation(0, 0, 30, rotation_type, object_index)
+
+    def remove_operation(self, operation_listbox: Listbox):
+        if len(operation_listbox.curselection()) == 0:
+            messagebox.showerror("Remove Operation Error", "Select an operation")
+        else:
+            pos = operation_listbox.curselection()[0]
+            operation_listbox.delete(pos)
+            self.graphic_system.remove_operation(pos)
+
+    def transform_shape(self, object_index: int, popup_window: Toplevel):
+        self.graphic_system.transform(object_index)
+        popup_window.destroy()
