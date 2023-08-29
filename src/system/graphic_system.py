@@ -30,19 +30,19 @@ class GraphicSystem:
             match len(points_list):
                 case 1:
                     x, y = self.viewport_transformation(points_list[0])
-                    self.viewport_canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill="black")
+                    self.viewport_canvas.create_oval(x - 3, y - 3, x + 3, y + 3, fill=obj.color)
                 case 2:
                     x1, y1 = self.viewport_transformation(points_list[0])
                     x2, y2 = self.viewport_transformation(points_list[1])
-                    self.viewport_canvas.create_line(x1, y1, x2, y2)
+                    self.viewport_canvas.create_line(x1, y1, x2, y2, fill=obj.color)
                 case default:
                     for i in range(len(points_list)-1):
                         x1, y1 = self.viewport_transformation(points_list[i])
                         x2, y2 = self.viewport_transformation(points_list[i+1])
-                        self.viewport_canvas.create_line(x1, y1, x2, y2)
+                        self.viewport_canvas.create_line(x1, y1, x2, y2, fill=obj.color)
                     x1, y1 = self.viewport_transformation(points_list[len(points_list)-1])
                     x2, y2 = self.viewport_transformation(points_list[0])
-                    self.viewport_canvas.create_line(x1, y1, x2, y2)
+                    self.viewport_canvas.create_line(x1, y1, x2, y2, fill=obj.color)
         self.viewport_canvas.update()
 
     def move_up(self) -> None:
@@ -69,17 +69,17 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple[float, float]], name: str) -> None:
+    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str) -> None:
         match len(points_list):
             case 1:
                 x, y = points_list[0]
-                self.display_file.append(Point(name, x, y))
+                self.display_file.append(Point(name, color, x, y))
             case 2:
                 x1, y1 = points_list[0]
                 x2, y2 = points_list[1]
-                self.display_file.append(Line(name, x1, y1, x2, y2))
+                self.display_file.append(Line(name, color, x1, y1, x2, y2))
             case default:
-                self.display_file.append(Wireframe(name, points_list))
+                self.display_file.append(Wireframe(name, color, points_list))
         self.draw_display_file()
 
     def remove_shape(self, pos: int) -> str:

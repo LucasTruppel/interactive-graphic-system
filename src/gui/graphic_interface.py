@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, colorchooser
 from gui.entry_with_placeholder import EntryWithPlaceholder
 from system.graphic_system import GraphicSystem
 
@@ -170,15 +170,25 @@ class GraphicInterface:
             popup_window, text="Remove Selected Point", width=25, command=lambda: self.remove_point(points_listbox, points_list))
         remove_button.pack(pady=(0, 10))
 
-        name_entry = EntryWithPlaceholder(popup_window, "Name")
-        name_entry.pack(padx=10, pady=(0, 10), fill=X)
+        # Name entry and pick color button frame
+        name_and_color_frame = Frame(popup_window)
+        name_and_color_frame.pack(padx=10, pady=(0, 10), fill=X)
+        name_and_color_frame.configure(bg="#333333")
+
+        name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
+        name_entry.pack(side=LEFT, padx=10, pady=(0, 10), fill=X, expand=True)
+
+        color_entry = Entry()
+        color_entry.insert(0, "#000000")
+        color_button = Button(name_and_color_frame, text="Pick a color", command=lambda: self.pick_color(color_entry))
+        color_button.pack(side=RIGHT, padx=10, pady=(0, 10), fill=X)
 
         popup_buttons_frame = Frame(popup_window)
         popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
         popup_buttons_frame.configure(bg="#333333")
 
         create_button = Button(
-            popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, popup_window))
+            popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window))
         create_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
 
         cancel_button = Button(
@@ -213,6 +223,15 @@ class GraphicInterface:
             points_listbox.delete(pos)
             points_list.pop(pos)
 
+    def pick_color(self, color_entry: Entry):
+        new_color = colorchooser.askcolor()[1]
+        if new_color is not None:
+            color = new_color
+        else:
+            color = color_entry.get()
+        color_entry.delete(0, END)
+        color_entry.insert(0, color)
+
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
             messagebox.showerror("Remove Shape Error", "Select a shape")
@@ -222,11 +241,12 @@ class GraphicInterface:
             name = self.graphic_system.remove_shape(pos)
             self.log(f'Shape "{name}" deleted.')
 
-    def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, popup_window: Toplevel) -> None:
+    def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry,
+                     popup_window: Toplevel) -> None:
         name = name_entry.get()
         if len(points_list) > 0:
             if name != "" and name != "Name":
-                self.graphic_system.create_shape(points_list, name)
+                self.graphic_system.create_shape(points_list, name, color_entry.get())
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
                 self.log(
@@ -437,7 +457,8 @@ class GraphicInterface:
             else:
                 messagebox.showerror("Add Scaling Error", "Invalid character")
 
-    def add_rotation(self, object_index: int, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, operation_listbox: Listbox):
+    def add_rotation(self, object_index: int, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder,
+                     operation_listbox: Listbox):
         rotation_type = self.selected_rotation.get()
         if rotation_type == "arbitrary_point":
             try:
@@ -475,4 +496,3 @@ class GraphicInterface:
     def cancel_transformation(self, popup_window: Toplevel):
         self.graphic_system.clear_transformation()
         popup_window.destroy()
-
