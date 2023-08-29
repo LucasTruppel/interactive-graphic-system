@@ -3,6 +3,7 @@ from tkinter import messagebox
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from system.graphic_system import GraphicSystem
+from gui.style import BG_COLOR, FG_COLOR
 
 
 class GraphicInterface:
@@ -27,7 +28,7 @@ class GraphicInterface:
         self.main_window.title("Interactive Graphic System")
         self.main_window.geometry(f"{self.WIDTH}x{self.HEIGHT}")
         self.main_window.resizable(False, False)
-        self.main_window.configure(bg="#333333")
+        self.main_window.configure(bg=BG_COLOR)
 
     def create_interface(self) -> None:
         left_frame = Frame(self.main_window)
@@ -83,7 +84,7 @@ class GraphicInterface:
         buttons_frame.pack()
 
         add_shape_button = Button(
-            buttons_frame, text="Add Shape", command=lambda:AddShapePopup(self.main_window, self.graphic_system, self.items_listbox))
+            buttons_frame, text="Add Shape", command=lambda: AddShapePopup(self.main_window, self.graphic_system, self.items_listbox))
         add_shape_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
 
         transform_button = Button(
@@ -92,7 +93,7 @@ class GraphicInterface:
         transform_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
 
         remove_button = Button(
-            buttons_frame, text="Remove Shape", command=self.remove_shape, background="#C95052", fg="white")
+            buttons_frame, text="Remove Shape", command=self.remove_shape, background="#C95052", fg=FG_COLOR)
         remove_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:

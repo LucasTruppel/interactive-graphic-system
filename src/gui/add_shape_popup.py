@@ -3,6 +3,7 @@ from tkinter import messagebox, colorchooser
 from gui.entry_with_placeholder import EntryWithPlaceholder
 from gui.transform_popup import TransformPopup
 from system.graphic_system import GraphicSystem
+from gui.style import BG_COLOR, FG_COLOR
 
 
 class AddShapePopup:
@@ -20,7 +21,7 @@ class AddShapePopup:
     def configure_popup(self, popup_window):
         popup_window.title("Add Shape")
         popup_window.resizable(False, False)
-        popup_window.configure(bg="#333333")
+        popup_window.configure(bg=BG_COLOR)
 
     def create_popup(self, popup_window) -> None:
         # Frame for the list of points
@@ -37,7 +38,7 @@ class AddShapePopup:
         # Frame for entering coordinates and adding points
         entry_frame = Frame(popup_window)
         entry_frame.pack(fill=X, padx=10, pady=(0, 10))
-        entry_frame.configure(bg="#333333")
+        entry_frame.configure(bg=BG_COLOR)
 
         x_entry = EntryWithPlaceholder(entry_frame, "x")
         y_entry = EntryWithPlaceholder(entry_frame, "y")
@@ -58,19 +59,20 @@ class AddShapePopup:
         # Name entry and pick color button frame
         name_and_color_frame = Frame(popup_window)
         name_and_color_frame.pack(padx=10, pady=(0, 10), fill=X)
-        name_and_color_frame.configure(bg="#333333")
+        name_and_color_frame.configure(bg=BG_COLOR)
 
         name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
         name_entry.pack(side=LEFT, padx=10, pady=(0, 10), fill=X, expand=True)
 
         color_entry = Entry()
         color_entry.insert(0, "#000000")
-        color_button = Button(name_and_color_frame, text="Pick a color", command=lambda: self.pick_color(color_entry))
+        color_button = Button(name_and_color_frame, text="Pick a color",
+                              command=lambda: self.pick_color(color_entry))
         color_button.pack(side=RIGHT, padx=10, pady=(0, 10), fill=X)
 
         popup_buttons_frame = Frame(popup_window)
         popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
-        popup_buttons_frame.configure(bg="#333333")
+        popup_buttons_frame.configure(bg=BG_COLOR)
 
         create_button = Button(
             popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window))
@@ -122,7 +124,8 @@ class AddShapePopup:
         name = name_entry.get()
         if len(points_list) > 0:
             if name != "" and name != "Name":
-                self.graphic_system.create_shape(points_list, name, color_entry.get())
+                self.graphic_system.create_shape(
+                    points_list, name, color_entry.get())
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
             else:

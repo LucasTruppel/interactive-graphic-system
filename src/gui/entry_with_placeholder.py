@@ -1,4 +1,5 @@
 import tkinter as tk
+from gui.style import BG_COLOR, FG_COLOR
 
 
 class EntryWithPlaceholder(tk.Entry):
