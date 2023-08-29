@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class GraphicObject:
+class GraphicObject(ABC):
 
     def __init__(self, name: str) -> None:
         self.name = name

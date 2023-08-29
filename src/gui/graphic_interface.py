@@ -400,11 +400,11 @@ class GraphicInterface:
         popup_buttons_frame.configure(bg="#333333")
 
         tramsform_button = Button(
-            popup_buttons_frame, text="Transform", width=25, command=lambda: self.transform_shape(object_index, popup_window))
+            popup_buttons_frame, text="Transform", width=25, command=lambda: self.transform_shape(operation_listbox.size() ,object_index, popup_window))
         tramsform_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
 
         cancel_button = Button(
-            popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
+            popup_buttons_frame, text="Cancel", width=25, command=lambda: self.cancel_transformation(popup_window))
         cancel_button.pack(side=LEFT, padx=(0, 5), expand=True, fill="both")
 
     def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder, operation_listbox: Listbox):
@@ -465,6 +465,14 @@ class GraphicInterface:
             operation_listbox.delete(pos)
             self.graphic_system.remove_operation(pos)
 
-    def transform_shape(self, object_index: int, popup_window: Toplevel):
-        self.graphic_system.transform(object_index)
+    def transform_shape(self, operations_amount: int, object_index: int, popup_window: Toplevel):
+        if operations_amount > 0:
+            self.graphic_system.transform(object_index)
+            popup_window.destroy()
+        else:
+            messagebox.showerror("Transform Error", "At least one operation is needed")
+
+    def cancel_transformation(self, popup_window: Toplevel):
+        self.graphic_system.clear_transformation()
         popup_window.destroy()
+

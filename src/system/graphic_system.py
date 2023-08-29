@@ -105,3 +105,6 @@ class GraphicSystem:
     def transform(self, object_index: int):
         self.transformation_handler.transform(self.display_file[object_index])
         self.draw_display_file()
+
+    def clear_transformation(self):
+        self.transformation_handler.clear_transformation()
