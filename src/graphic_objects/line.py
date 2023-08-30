@@ -9,4 +9,3 @@ class Line(GraphicObject):
 
     def get_points(self) -> list[Point]:
         return self.points
-

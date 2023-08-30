@@ -161,7 +161,7 @@ class GraphicInterface:
     def zoom_out(self) -> None:
         self.graphic_system.zoom_out()
 
-    def transform(self):
+    def transform(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
             messagebox.showerror("Transform Shape", "Select a shape")
         else:

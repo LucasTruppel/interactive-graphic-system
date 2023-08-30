@@ -41,4 +41,3 @@ class Window:
         y_dif = 0.1 * abs(self.y_max - self.y_min)
         self.y_min -= y_dif
         self.y_max += y_dif
-

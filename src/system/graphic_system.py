@@ -101,12 +101,12 @@ class GraphicSystem:
             x, y = self.transformation_handler.get_object_center(self.display_file[object_index])
         self.transformation_handler.add_rotation_matrix(x, y, angle)
 
-    def remove_operation(self, operation_index: int):
+    def remove_operation(self, operation_index: int) -> None:
         self.transformation_handler.remove_operation(operation_index)
 
-    def transform(self, object_index: int):
+    def transform(self, object_index: int) -> None:
         self.transformation_handler.transform(self.display_file[object_index])
         self.draw_display_file()
 
-    def clear_transformation(self):
+    def clear_transformation(self) -> None:
         self.transformation_handler.clear_transformation()

@@ -3,7 +3,7 @@ from tkinter import Text
 
 class Logger:
 
-    def __init__(self, console_text: Text):
+    def __init__(self, console_text: Text) -> None:
         self.console_text = console_text
 
     def log(self, text: str) -> None:

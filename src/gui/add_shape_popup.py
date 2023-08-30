@@ -10,18 +10,18 @@ from utils.utils import format_point_list
 
 class AddShapePopup:
 
-    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger):
+    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger) -> None:
         self.graphic_system = graphic_system
         self.items_listbox = items_listbox
         self.logger = logger
         popup_window = Toplevel(root)
         self.init_popup(popup_window)
 
-    def init_popup(self, popup_window):
+    def init_popup(self, popup_window) -> None:
         self.configure_popup(popup_window)
         self.create_popup(popup_window)
 
-    def configure_popup(self, popup_window):
+    def configure_popup(self, popup_window) -> None:
         popup_window.title("Add Shape")
         popup_window.resizable(False, False)
         popup_window.configure(bg=BG_COLOR)
@@ -113,7 +113,7 @@ class AddShapePopup:
             points_listbox.delete(pos)
             points_list.pop(pos)
 
-    def pick_color(self, color_entry: Entry):
+    def pick_color(self, color_entry: Entry) -> None:
         new_color = colorchooser.askcolor()[1]
         if new_color is not None:
             color = new_color

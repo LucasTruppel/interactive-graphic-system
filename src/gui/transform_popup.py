@@ -7,7 +7,7 @@ from gui.style import BG_COLOR, FG_COLOR
 
 class TransformPopup:
 
-    def __init__(self, root, graphic_system: GraphicSystem, object_index: int):
+    def __init__(self, root, graphic_system: GraphicSystem, object_index: int) -> None:
         self.graphic_system = graphic_system
         self.object_index = object_index
         self.selected_rotation = StringVar()
@@ -15,7 +15,7 @@ class TransformPopup:
         popup_window = Toplevel(root)
         self.init_popup(popup_window)
 
-    def init_popup(self, popup_window):
+    def init_popup(self, popup_window) -> None:
         self.graphic_system.clear_transformation()
         self.configure_popup(popup_window)
         main_popup_frame = Frame(popup_window)
@@ -23,12 +23,12 @@ class TransformPopup:
         self.create_right_column(main_popup_frame)
         self.create_left_column(main_popup_frame, popup_window)
 
-    def configure_popup(self, popup_window):
+    def configure_popup(self, popup_window) -> None:
         popup_window.title("Transform Shape")
         popup_window.resizable(False, False)
         popup_window.configure(bg=BG_COLOR)
 
-    def create_right_column(self, main_popup_frame):
+    def create_right_column(self, main_popup_frame) -> None:
         right_column_frame = Frame(main_popup_frame)
         right_column_frame.pack(side=RIGHT, fill=BOTH,
                                 expand=True, padx=5, pady=5)
@@ -49,7 +49,7 @@ class TransformPopup:
             command=lambda: self.remove_operation())
         remove_operation_button.pack(padx=10, pady=(10, 0))
 
-    def create_left_column(self, main_popup_frame, popup_window):
+    def create_left_column(self, main_popup_frame, popup_window) -> None:
         # Left Column
         left_column_frame = Frame(main_popup_frame)
         left_column_frame.pack(side=LEFT, fill=BOTH,
@@ -159,7 +159,7 @@ class TransformPopup:
         cancel_button.pack(side=LEFT, padx=5, pady=5,
                            expand=True, fill="both")
 
-    def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder):
+    def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder) -> None:
         try:
             dx = float(dx_entry.get())
             dy = float(dy_entry.get())
@@ -176,7 +176,7 @@ class TransformPopup:
                 messagebox.showerror(
                     "Add Translation Error", "Invalid character")
 
-    def add_scaling(self, sx_entry: EntryWithPlaceholder, sy_entry: EntryWithPlaceholder):
+    def add_scaling(self, sx_entry: EntryWithPlaceholder, sy_entry: EntryWithPlaceholder) -> None:
         try:
             sx = float(sx_entry.get())
             sy = float(sy_entry.get())
@@ -214,7 +214,7 @@ class TransformPopup:
         angle_entry.clear()
         self.graphic_system.add_rotation(x, y, angle, rotation_type, self.object_index)
 
-    def remove_operation(self):
+    def remove_operation(self) -> None:
         if len(self.operation_listbox.curselection()) == 0:
             messagebox.showerror("Remove Operation Error",
                                  "Select an operation")
@@ -223,7 +223,7 @@ class TransformPopup:
             self.operation_listbox.delete(pos)
             self.graphic_system.remove_operation(pos)
 
-    def transform_shape(self, operations_amount: int, popup_window: Toplevel):
+    def transform_shape(self, operations_amount: int, popup_window: Toplevel) -> None:
         if operations_amount > 0:
             self.graphic_system.transform(self.object_index)
             popup_window.destroy()
@@ -231,6 +231,6 @@ class TransformPopup:
             messagebox.showerror(
                 "Transform Error", "At least one operation is needed")
 
-    def cancel_transformation(self, popup_window: Toplevel):
+    def cancel_transformation(self, popup_window: Toplevel) -> None:
         self.graphic_system.clear_transformation()
         popup_window.destroy()

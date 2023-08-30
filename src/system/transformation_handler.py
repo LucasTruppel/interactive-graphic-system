@@ -8,7 +8,7 @@ from utils.utils import format_point_list
 
 class TransformationHandler:
 
-    def __init__(self, logger: Logger):
+    def __init__(self, logger: Logger) -> None:
         self.operations = []
         self.logger = logger
         
@@ -27,7 +27,6 @@ class TransformationHandler:
             point.y = new_point_matrix[1]
         self.logger.log(f"New {graphic_object.name} points: "
                         f"{format_point_list(list(map(Point.get_coordinates, points_list)))}.")
-
 
     def join_operations(self, matrix_list: list[np.array]) -> np.array:
         if len(matrix_list) == 1:
@@ -55,7 +54,7 @@ class TransformationHandler:
                                          [-1*sin, cos, 0],
                                          [x-cos*x+y*sin, y-cos*y-x*sin, 1]]))
 
-    def remove_operation(self, pos: int):
+    def remove_operation(self, pos: int) -> None:
         self.operations.pop(pos)
 
     def get_object_center(self, graphic_object: GraphicObject) -> tuple[float, float]:
@@ -68,5 +67,5 @@ class TransformationHandler:
         n = len(points_list)
         return x_sum/n, y_sum/n
 
-    def clear_transformation(self):
+    def clear_transformation(self) -> None:
         self.operations = []
