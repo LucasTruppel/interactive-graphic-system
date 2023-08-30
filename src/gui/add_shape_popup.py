@@ -46,13 +46,13 @@ class AddShapePopup:
         x_entry = EntryWithPlaceholder(entry_frame, "x")
         y_entry = EntryWithPlaceholder(entry_frame, "y")
 
-        x_entry.pack(side=LEFT, padx=(0, 10))
-        y_entry.pack(side=LEFT, padx=(0, 10))
+        x_entry.pack(side=LEFT, padx=(0, 10), expand=True)
+        y_entry.pack(side=LEFT, padx=(0, 10), expand=True)
 
         points_list = []
-        add_button = Button(entry_frame, text="Add Point",
+        add_button = Button(entry_frame, text="Add Point", width=10,
                             command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list))
-        add_button.pack(side=LEFT, expand=True, fill='both')
+        add_button.pack(side=LEFT)
 
         # Button to remove selected point
         remove_button = Button(
@@ -65,13 +65,13 @@ class AddShapePopup:
         name_and_color_frame.configure(bg=BG_COLOR)
 
         name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
-        name_entry.pack(side=LEFT, padx=10, pady=(0, 10), fill=X, expand=True)
+        name_entry.pack(side=LEFT, padx=(0, 10), pady=(0, 10), fill=X, expand=True)
 
         color_entry = Entry()
         color_entry.insert(0, "#000000")
-        color_button = Button(name_and_color_frame, text="Pick a color",
+        color_button = Button(name_and_color_frame, text="Pick a color", width=10,
                               command=lambda: self.pick_color(color_entry))
-        color_button.pack(side=RIGHT, padx=10, pady=(0, 10), fill=X)
+        color_button.pack(side=RIGHT, pady=(0, 10), fill=X)
 
         popup_buttons_frame = Frame(popup_window)
         popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
@@ -79,11 +79,11 @@ class AddShapePopup:
 
         create_button = Button(
             popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window))
-        create_button.pack(side=LEFT, padx=(5, 0), expand=True, fill="both")
+        create_button.pack(side=LEFT, padx=(0, 10), expand=True, fill="both")
 
         cancel_button = Button(
             popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
-        cancel_button.pack(side=LEFT, padx=(0, 5), expand=True, fill="both")
+        cancel_button.pack(side=LEFT,  expand=True, fill="both")
 
     def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:
