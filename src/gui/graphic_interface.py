@@ -4,6 +4,7 @@ from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
+from gui.logger import Logger
 
 
 class GraphicInterface:
@@ -16,6 +17,7 @@ class GraphicInterface:
         self.items_listbox = None
         self.console_text = None
         self.graphic_system = None
+        self.logger = None
 
         self.init_tkinter()
 
@@ -32,25 +34,22 @@ class GraphicInterface:
 
     def create_interface(self) -> None:
         left_frame = Frame(self.main_window)
-        left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH, expand=True)
+        right_frame = Frame(self.main_window)
 
+        console_frame = Frame(right_frame)
+        console_text = Text(right_frame, height=self.HEIGHT * 0.2, width=50, wrap=WORD, state="disabled")
+        self.logger = Logger(console_text)
+
+        left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_objects_list_frame(left_frame)
         self.create_buttons_frame(left_frame)
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
 
-        right_frame = Frame(self.main_window)
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
-
         self.create_viewport_frame(right_frame)
-        self.create_console_frame(right_frame)
-
-    def create_console_frame(self, right_frame: Frame) -> None:
-        console_frame = Frame(right_frame)
         console_frame.pack(fill=BOTH, expand=True)
-        self.console_text = Text(right_frame, height=self.HEIGHT * 0.2,
-                                 width=50, wrap=WORD, state="disabled")
-        self.console_text.pack(side=BOTTOM, fill=BOTH)
+        console_text.pack(side=BOTTOM, fill=BOTH)
 
     def create_viewport_frame(self, right_frame: Frame) -> None:
         viewport_margin = 15
@@ -65,7 +64,7 @@ class GraphicInterface:
         viewport_canvas.pack(fill=BOTH, expand=True)
 
         self.graphic_system = GraphicSystem(
-            viewport_width, viewport_height, viewport_canvas)
+            viewport_width, viewport_height, viewport_canvas, self.logger)
 
     def create_objects_list_frame(self, parent_frame: Frame) -> None:
         items_frame = Frame(parent_frame)
@@ -84,7 +83,8 @@ class GraphicInterface:
         buttons_frame.pack()
 
         add_shape_button = Button(
-            buttons_frame, text="Add Shape", command=lambda: AddShapePopup(self.main_window, self.graphic_system, self.items_listbox))
+            buttons_frame, text="Add Shape", command=lambda: AddShapePopup(self.main_window, self.graphic_system,
+                                                                           self.items_listbox, self.logger))
         add_shape_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
 
         transform_button = Button(
@@ -141,7 +141,7 @@ class GraphicInterface:
             pos = self.items_listbox.curselection()[0]
             self.items_listbox.delete(pos)
             name = self.graphic_system.remove_shape(pos)
-            self.log(f'Shape "{name}" deleted.')
+            self.logger.log(f'Shape "{name}" deleted.')
 
     def move_up(self) -> None:
         self.graphic_system.move_up()
@@ -160,12 +160,6 @@ class GraphicInterface:
 
     def zoom_out(self) -> None:
         self.graphic_system.zoom_out()
-
-    def log(self, text: str) -> None:
-        self.console_text.configure(state="normal")
-        self.console_text.insert("end", text + "\n")
-        self.console_text.see("end")
-        self.console_text.configure(state="disabled")
 
     def transform(self):
         if len(self.items_listbox.curselection()) == 0:

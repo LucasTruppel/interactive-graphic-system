@@ -4,13 +4,16 @@ from gui.entry_with_placeholder import EntryWithPlaceholder
 from gui.transform_popup import TransformPopup
 from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
+from gui.logger import Logger
+from utils.utils import format_point_list
 
 
 class AddShapePopup:
 
-    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox):
+    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger):
         self.graphic_system = graphic_system
         self.items_listbox = items_listbox
+        self.logger = logger
         popup_window = Toplevel(root)
         self.init_popup(popup_window)
 
@@ -128,6 +131,8 @@ class AddShapePopup:
                     points_list, name, color_entry.get())
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
+                self.logger.log(
+                    f'Shape "{name}" created with points: {format_point_list(points_list)}.')
             else:
                 messagebox.showerror("Create Shape Error",
                                      "Shape name must be specified")

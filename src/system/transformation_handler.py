@@ -1,15 +1,20 @@
 import math
 import numpy as np
 from graphic_objects.graphic_object import GraphicObject
+from graphic_objects.point import Point
+from gui.logger import Logger
+from utils.utils import format_point_list
 
 
 class TransformationHandler:
 
-    def __init__(self):
+    def __init__(self, logger: Logger):
         self.operations = []
+        self.logger = logger
         
     def transform(self, graphic_object: GraphicObject) -> None:
         matrix = self.join_operations(self.operations)
+        self.logger.log(f"Operation matrix for {graphic_object.name}: \n{matrix}")
         self.transform_object(graphic_object, matrix)
         self.operations = []
 
@@ -20,6 +25,9 @@ class TransformationHandler:
             new_point_matrix = np.dot(old_point_matrix, matrix)
             point.x = new_point_matrix[0]
             point.y = new_point_matrix[1]
+        self.logger.log(f"New {graphic_object.name} points: "
+                        f"{format_point_list(list(map(Point.get_coordinates, points_list)))}.")
+
 
     def join_operations(self, matrix_list: list[np.array]) -> np.array:
         if len(matrix_list) == 1:

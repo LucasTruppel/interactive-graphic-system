@@ -9,3 +9,6 @@ class Point(GraphicObject):
 
     def get_points(self) -> list['Point']:
         return [self]
+
+    def get_coordinates(self) -> tuple[float, float]:
+        return self.x, self.y

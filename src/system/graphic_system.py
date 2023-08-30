@@ -4,16 +4,18 @@ from graphic_objects.line import *
 from tkinter import Canvas
 from graphic_objects.wireframe import Wireframe
 from system.transformation_handler import TransformationHandler
+from gui.logger import Logger
 
 
 class GraphicSystem:
 
-    def __init__(self, width: float, height: float, viewport_canvas: Canvas) -> None:
+    def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file = []
         self.window = Window(0, 0, width, height)
         self.viewport = Viewport(0, 0, width, height)
         self.viewport_canvas = viewport_canvas
-        self.transformation_handler = TransformationHandler()
+        self.transformation_handler = TransformationHandler(logger)
+        self.logger = logger
 
     def viewport_transformation(self, point: Point) -> tuple[float, float]:
         xw, yw = point.x, point.y
