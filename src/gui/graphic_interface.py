@@ -80,7 +80,7 @@ class GraphicInterface:
 
     def create_buttons_frame(self, parent_frame: Frame) -> None:
         buttons_frame = Frame(parent_frame, padx=10,
-                              pady=10, borderwidth=2, relief="solid")
+                              pady=10, relief="solid")
         buttons_frame.pack()
 
         add_shape_button = Button(

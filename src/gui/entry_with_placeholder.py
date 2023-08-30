@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+
 from gui.style import BG_COLOR, FG_COLOR
 
 
@@ -31,3 +33,15 @@ class EntryWithPlaceholder(tk.Entry):
         self.delete(0, tk.END)
         self.root.focus_set()
         self.put_placeholder()
+
+    def validate(self, is_number: bool) -> bool:
+        if self.get() == "" or self.get() == self.placeholder:
+            messagebox.showerror("Error", f"Field {self.placeholder} must be specified")
+            return False
+        if is_number:
+            try:
+                float(self.get())
+            except ValueError:
+                messagebox.showerror("Error", f"Invalid character for {self.placeholder}.")
+                return False
+        return True

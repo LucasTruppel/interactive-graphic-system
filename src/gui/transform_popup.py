@@ -16,6 +16,7 @@ class TransformPopup:
         self.init_popup(popup_window)
 
     def init_popup(self, popup_window):
+        self.graphic_system.clear_transformation()
         self.configure_popup(popup_window)
         main_popup_frame = Frame(popup_window)
         main_popup_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
@@ -35,7 +36,7 @@ class TransformPopup:
 
         # Operation list
         operation_list_frame = Frame(right_column_frame)
-        operation_list_frame.pack(fill=X, padx=5, pady=5)
+        operation_list_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
         operation_list_frame.configure(bg=BG_COLOR)
 
         self.operation_listbox = Listbox(
@@ -91,8 +92,8 @@ class TransformPopup:
         scaling_entry_frame.pack(fill=X, expand=True, padx=5, pady=5)
         scaling_entry_frame.configure(bg=BG_COLOR)
 
-        sx_entry = EntryWithPlaceholder(scaling_entry_frame, "x")
-        sy_entry = EntryWithPlaceholder(scaling_entry_frame, "y")
+        sx_entry = EntryWithPlaceholder(scaling_entry_frame, "Sx")
+        sy_entry = EntryWithPlaceholder(scaling_entry_frame, "Sy")
         sx_entry.pack(side=LEFT, padx=(0, 10))
         sy_entry.pack(side=LEFT, padx=(0, 10))
 
@@ -134,11 +135,11 @@ class TransformPopup:
         x_entry.pack(side=LEFT, padx=5, pady=5)
         y_entry.pack(side=LEFT, padx=5, pady=5)
 
-        angle_entry = EntryWithPlaceholder(rotation_frame, "angle")
+        angle_entry = EntryWithPlaceholder(rotation_frame, "Angle")
         angle_entry.pack(padx=5, pady=5)
 
         add_rotation_button = Button(rotation_frame, text="Add Rotation",
-                                     command=lambda: self.add_rotation(x_entry, y_entry))
+                                     command=lambda: self.add_rotation(x_entry, y_entry, angle_entry))
         add_rotation_button.pack(padx=5, pady=5)
 
         # Bottom ok and cancel buttons frame
@@ -151,12 +152,12 @@ class TransformPopup:
             popup_buttons_frame, text="Transform", width=25,
             command=lambda: self.transform_shape(self.operation_listbox.size(), popup_window))
         tramsform_button.pack(side=LEFT, padx=5, pady=5,
-                              expand=False, fill="both")
+                              expand=True, fill="both")
 
         cancel_button = Button(
             popup_buttons_frame, text="Cancel", width=25, command=lambda: self.cancel_transformation(popup_window))
         cancel_button.pack(side=LEFT, padx=5, pady=5,
-                           expand=False, fill="both")
+                           expand=True, fill="both")
 
     def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder):
         try:
@@ -191,30 +192,27 @@ class TransformPopup:
             else:
                 messagebox.showerror("Add Scaling Error", "Invalid character")
 
-    def add_rotation(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder):
+    def add_rotation(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder,
+                     angle_entry: EntryWithPlaceholder) -> None:
         rotation_type = self.selected_rotation.get()
+        if not (angle_entry.validate(True)):
+            return
+        angle = float(angle_entry.get())
         if rotation_type == "arbitrary_point":
-            try:
-                x = float(x_entry.get())
-                y = float(y_entry.get())
-                self.graphic_system.add_rotation(
-                    x, y, 30, rotation_type, self.object_index)
-                self.operation_listbox.insert(
-                    "end", f"Rotation x:{x:g} y:{y:g}")
-                x_entry.clear()
-                y_entry.clear()
-            except ValueError as e:
-                if x_entry.get() == "" or y_entry.get() == "":
-                    messagebox.showerror(
-                        "Add Rotation Error", "Values must be specified")
-                else:
-                    messagebox.showerror(
-                        "Add Rotation Error", "Invalid character")
+            if not (x_entry.validate(True) and y_entry.validate(True)):
+                return
+            x = float(x_entry.get())
+            y = float(y_entry.get())
+            x_entry.clear()
+            y_entry.clear()
+            self.operation_listbox.insert("end", f"Rotation x:{x:g} y:{y:g} angle:{angle:g}")
         else:
-            self.operation_listbox.insert(
-                "end", f"Rotation: {rotation_type.replace('_',' ')}")
-            self.graphic_system.add_rotation(
-                0, 0, 30, rotation_type, self.object_index)
+            x = 0
+            y = 0
+            self.operation_listbox.insert("end",
+                                          f"Rotation {rotation_type.replace('_', ' ')} angle:{angle:g}")
+        angle_entry.clear()
+        self.graphic_system.add_rotation(x, y, angle, rotation_type, self.object_index)
 
     def remove_operation(self):
         if len(self.operation_listbox.curselection()) == 0:
