@@ -72,7 +72,7 @@ class AddShapePopup:
         color_entry = Entry()
         color_entry.insert(0, "#000000")
         color_canvas = Canvas(name_and_color_frame, width=30,
-                              height=30, bg=color_entry.get())
+                              height=20, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
         color_button = CustomButton(name_and_color_frame, text="Pick a color",
@@ -81,7 +81,7 @@ class AddShapePopup:
 
         # Add shape window confirm and cancel buttons frame
         popup_buttons_frame = Frame(popup_window)
-        popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X, side=RIGHT)
+        popup_buttons_frame.pack(padx=5, pady=5, fill=X, side=RIGHT)
         popup_buttons_frame.configure(bg=BG_COLOR)
 
         create_button = CustomButton(

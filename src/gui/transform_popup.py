@@ -5,6 +5,7 @@ from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
 from gui.custom_button import CustomButton
 
+
 class TransformPopup:
 
     def __init__(self, root, graphic_system: GraphicSystem, object_index: int) -> None:
@@ -37,18 +38,19 @@ class TransformPopup:
 
         # Operation list
         operation_list_frame = Frame(right_column_frame)
-        operation_list_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
+        operation_list_frame.pack(
+            fill=BOTH, expand=True, padx=5, pady=5)
         operation_list_frame.configure(bg=BG_COLOR)
 
         self.operation_listbox = Listbox(
-            operation_list_frame, selectmode=SINGLE)
+            operation_list_frame, selectmode=SINGLE, width=50)
         self.operation_listbox.pack(side=LEFT, fill=BOTH, expand=True)
 
         # Remove operation button
-        remove_operation_button = Button(
-            right_column_frame, text="Remove Operation", width=25,
-            command=lambda: self.remove_operation())
-        remove_operation_button.pack(padx=10, pady=(10, 0))
+        remove_operation_button = CustomButton(
+            right_column_frame, text="Remove Operation",
+            command=lambda: self.remove_operation(), button_type='red_button')
+        remove_operation_button.pack()
 
     def create_left_column(self, main_popup_frame, popup_window) -> None:
         # Left Column
@@ -72,10 +74,10 @@ class TransformPopup:
 
         dx_entry = EntryWithPlaceholder(translation_entry_frame, "Dx")
         dy_entry = EntryWithPlaceholder(translation_entry_frame, "Dy")
-        dx_entry.pack(side=LEFT, padx=(0, 10))
-        dy_entry.pack(side=LEFT, padx=(0, 10))
+        dx_entry.pack(side=LEFT, padx=5)
+        dy_entry.pack(side=LEFT, padx=5)
 
-        add_translation_button = Button(
+        add_translation_button = CustomButton(
             translation_frame, text="Add Translation",
             command=lambda: self.add_translation(dx_entry, dy_entry))
         add_translation_button.pack(padx=5, pady=5)
@@ -86,7 +88,7 @@ class TransformPopup:
         scaling_frame.configure(bg=BG_COLOR)
 
         scaling_label = Label(scaling_frame, text="Scaling")
-        scaling_label.pack(padx=(0, 10))
+        scaling_label.pack(padx=5)
         scaling_label.configure(bg=BG_COLOR, fg=FG_COLOR)
 
         scaling_entry_frame = Frame(scaling_frame)
@@ -95,11 +97,11 @@ class TransformPopup:
 
         sx_entry = EntryWithPlaceholder(scaling_entry_frame, "Sx")
         sy_entry = EntryWithPlaceholder(scaling_entry_frame, "Sy")
-        sx_entry.pack(side=LEFT, padx=(0, 10))
-        sy_entry.pack(side=LEFT, padx=(0, 10))
+        sx_entry.pack(side=LEFT, padx=5)
+        sy_entry.pack(side=LEFT, padx=5)
 
-        add_scaling_button = Button(scaling_frame, text="Add Scaling",
-                                    command=lambda: self.add_scaling(sx_entry, sy_entry))
+        add_scaling_button = CustomButton(scaling_frame, text="Add Scaling",
+                                          command=lambda: self.add_scaling(sx_entry, sy_entry))
         add_scaling_button.pack(padx=5, pady=5)
 
         # Rotation
@@ -139,26 +141,24 @@ class TransformPopup:
         angle_entry = EntryWithPlaceholder(rotation_frame, "Angle")
         angle_entry.pack(padx=5, pady=5)
 
-        add_rotation_button = Button(rotation_frame, text="Add Rotation",
-                                     command=lambda: self.add_rotation(x_entry, y_entry, angle_entry))
+        add_rotation_button = CustomButton(rotation_frame, text="Add Rotation",
+                                           command=lambda: self.add_rotation(x_entry, y_entry, angle_entry))
         add_rotation_button.pack(padx=5, pady=5)
 
         # Bottom ok and cancel buttons frame
 
         popup_buttons_frame = Frame(popup_window)
-        popup_buttons_frame.pack(padx=5, pady=5, fill=X)
+        popup_buttons_frame.pack(padx=5, pady=5, fill=X, side=RIGHT)
         popup_buttons_frame.configure(bg=BG_COLOR)
 
-        tramsform_button = Button(
-            popup_buttons_frame, text="Transform", width=25,
-            command=lambda: self.transform_shape(self.operation_listbox.size(), popup_window))
-        tramsform_button.pack(side=LEFT, padx=5, pady=5,
-                              expand=True, fill="both")
+        tramsform_button = CustomButton(
+            popup_buttons_frame, text="Transform",
+            command=lambda: self.transform_shape(self.operation_listbox.size(), popup_window), button_type='default_button')
+        tramsform_button.pack(side=LEFT)
 
-        cancel_button = Button(
-            popup_buttons_frame, text="Cancel", width=25, command=lambda: self.cancel_transformation(popup_window))
-        cancel_button.pack(side=LEFT, padx=5, pady=5,
-                           expand=True, fill="both")
+        cancel_button = CustomButton(
+            popup_buttons_frame, text="Cancel", command=lambda: self.cancel_transformation(popup_window), button_type='red_button')
+        cancel_button.pack(side=LEFT)
 
     def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder) -> None:
         try:
