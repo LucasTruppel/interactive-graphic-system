@@ -14,8 +14,9 @@ class AddShapePopup:
         self.graphic_system = graphic_system
         self.items_listbox = items_listbox
         self.logger = logger
-        popup_window = Toplevel(root)
-        self.init_popup(popup_window)
+        self.popup_window = Toplevel(root)
+        self.popup_window.attributes("-topmost", True)
+        self.init_popup(self.popup_window)
 
     def init_popup(self, popup_window) -> None:
         self.configure_popup(popup_window)
@@ -65,14 +66,19 @@ class AddShapePopup:
         name_and_color_frame.configure(bg=BG_COLOR)
 
         name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
-        name_entry.pack(side=LEFT, padx=(0, 10), pady=(0, 10), fill=X, expand=True)
+        name_entry.pack(side=LEFT, fill=X, expand=True, padx=5)
 
         color_entry = Entry()
         color_entry.insert(0, "#000000")
-        color_button = Button(name_and_color_frame, text="Pick a color", width=10,
-                              command=lambda: self.pick_color(color_entry))
-        color_button.pack(side=RIGHT, pady=(0, 10), fill=X)
+        color_canvas = Canvas(name_and_color_frame, width=30,
+                              height=30, bg=color_entry.get())
+        color_canvas.pack(side=LEFT, padx=5)
 
+        color_button = Button(name_and_color_frame, text="Pick a color", width=10,
+                              command=lambda: self.pick_color(color_entry, color_canvas))
+        color_button.pack(side=LEFT, padx=5, fill=X)
+
+        # Add shape window confirm and cancel buttons frame
         popup_buttons_frame = Frame(popup_window)
         popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
         popup_buttons_frame.configure(bg=BG_COLOR)
@@ -113,14 +119,17 @@ class AddShapePopup:
             points_listbox.delete(pos)
             points_list.pop(pos)
 
-    def pick_color(self, color_entry: Entry) -> None:
-        new_color = colorchooser.askcolor()[1]
+    def pick_color(self, color_entry: Entry, color_canvas: Canvas) -> None:
+        new_color = colorchooser.askcolor(parent=self.popup_window)[1]
         if new_color is not None:
             color = new_color
         else:
             color = color_entry.get()
         color_entry.delete(0, END)
         color_entry.insert(0, color)
+
+        # Update the color of the canvas square
+        color_canvas.configure(bg=color)
 
     def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry,
                      popup_window: Toplevel) -> None:

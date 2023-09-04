@@ -13,6 +13,7 @@ class TransformPopup:
         self.selected_rotation = StringVar()
         self.operation_listbox = None
         popup_window = Toplevel(root)
+        popup_window.attributes("-topmost", True)
         self.init_popup(popup_window)
 
     def init_popup(self, popup_window) -> None:
@@ -205,14 +206,16 @@ class TransformPopup:
             y = float(y_entry.get())
             x_entry.clear()
             y_entry.clear()
-            self.operation_listbox.insert("end", f"Rotation x:{x:g} y:{y:g} angle:{angle:g}")
+            self.operation_listbox.insert(
+                "end", f"Rotation x:{x:g} y:{y:g} angle:{angle:g}")
         else:
             x = 0
             y = 0
             self.operation_listbox.insert("end",
                                           f"Rotation {rotation_type.replace('_', ' ')} angle:{angle:g}")
         angle_entry.clear()
-        self.graphic_system.add_rotation(x, y, angle, rotation_type, self.object_index)
+        self.graphic_system.add_rotation(
+            x, y, angle, rotation_type, self.object_index)
 
     def remove_operation(self) -> None:
         if len(self.operation_listbox.curselection()) == 0:

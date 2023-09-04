@@ -3,8 +3,9 @@ from tkinter import messagebox
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from system.graphic_system import GraphicSystem
-from gui.style import BG_COLOR, FG_COLOR
+from gui.style import BG_COLOR, FG_COLOR, REMOVE_COLOR
 from gui.logger import Logger
+from gui.custom_button import CustomButton
 
 
 class GraphicInterface:
@@ -37,7 +38,8 @@ class GraphicInterface:
         right_frame = Frame(self.main_window)
 
         console_frame = Frame(right_frame)
-        console_text = Text(right_frame, height=self.HEIGHT * 0.2, width=50, wrap=WORD, state="disabled")
+        console_text = Text(right_frame, height=self.HEIGHT *
+                            0.2, width=50, wrap=WORD, state="disabled")
         self.logger = Logger(console_text)
 
         left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH, expand=True)
@@ -82,19 +84,22 @@ class GraphicInterface:
                               pady=10, relief="solid")
         buttons_frame.pack()
 
-        add_shape_button = Button(
-            buttons_frame, text="Add Shape", command=lambda: AddShapePopup(self.main_window, self.graphic_system,
-                                                                           self.items_listbox, self.logger))
-        add_shape_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
+        add_shape_button = CustomButton(
+            buttons_frame,
+            text="Add Shape",
+            command=lambda: AddShapePopup(self.main_window, self.graphic_system,
+                                          self.items_listbox, self.logger), button_type='default_button'
+        )
+        add_shape_button.pack(side=LEFT)
 
-        transform_button = Button(
+        transform_button = CustomButton(
             buttons_frame, text="Transform Shape",
-            command=lambda: self.transform())
-        transform_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
+            command=lambda: self.transform(), button_type='default_button')
+        transform_button.pack(side=LEFT)
 
-        remove_button = Button(
-            buttons_frame, text="Remove Shape", command=self.remove_shape, background="#C95052", fg=FG_COLOR)
-        remove_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
+        remove_button = CustomButton(
+            buttons_frame, text="Remove Shape", command=self.remove_shape, button_type='red_button')
+        remove_button.pack(side=LEFT)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
         camera_controls_frame = Frame(
