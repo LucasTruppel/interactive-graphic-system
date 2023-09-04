@@ -6,6 +6,7 @@ from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
 from gui.logger import Logger
 from utils.utils import format_point_list
+from gui.custom_button import CustomButton
 
 
 class AddShapePopup:
@@ -51,14 +52,14 @@ class AddShapePopup:
         y_entry.pack(side=LEFT, padx=(0, 10), expand=True)
 
         points_list = []
-        add_button = Button(entry_frame, text="Add Point", width=10,
-                            command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list))
+        add_button = CustomButton(entry_frame, text="Add Point",
+                                  command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list), button_type='default_button')
         add_button.pack(side=LEFT)
 
-        # Button to remove selected point
-        remove_button = Button(
-            popup_window, text="Remove Selected Point", width=25, command=lambda: self.remove_point(points_listbox, points_list))
-        remove_button.pack(pady=(0, 10))
+        # CustomButton to remove selected point
+        remove_button = CustomButton(
+            entry_frame, text="Remove Selected Point", command=lambda: self.remove_point(points_listbox, points_list), button_type='red_button')
+        remove_button.pack(side=LEFT)
 
         # Name entry and pick color button frame
         name_and_color_frame = Frame(popup_window)
@@ -66,7 +67,7 @@ class AddShapePopup:
         name_and_color_frame.configure(bg=BG_COLOR)
 
         name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
-        name_entry.pack(side=LEFT, fill=X, expand=True, padx=5)
+        name_entry.pack(side=LEFT, fill=X, expand=True)
 
         color_entry = Entry()
         color_entry.insert(0, "#000000")
@@ -74,22 +75,22 @@ class AddShapePopup:
                               height=30, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
-        color_button = Button(name_and_color_frame, text="Pick a color", width=10,
-                              command=lambda: self.pick_color(color_entry, color_canvas))
-        color_button.pack(side=LEFT, padx=5, fill=X)
+        color_button = CustomButton(name_and_color_frame, text="Pick a color",
+                                    command=lambda: self.pick_color(color_entry, color_canvas), button_type='default_button')
+        color_button.pack(side=LEFT)
 
         # Add shape window confirm and cancel buttons frame
         popup_buttons_frame = Frame(popup_window)
-        popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X)
+        popup_buttons_frame.pack(padx=10, pady=(0, 10), fill=X, side=RIGHT)
         popup_buttons_frame.configure(bg=BG_COLOR)
 
-        create_button = Button(
-            popup_buttons_frame, text="Create Shape", width=25, command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window))
-        create_button.pack(side=LEFT, padx=(0, 10), expand=True, fill="both")
+        create_button = CustomButton(
+            popup_buttons_frame, text="Create Shape", command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window), button_type='default_button')
+        create_button.pack(side=LEFT)
 
-        cancel_button = Button(
-            popup_buttons_frame, text="Cancel", width=25, command=popup_window.destroy)
-        cancel_button.pack(side=LEFT,  expand=True, fill="both")
+        cancel_button = CustomButton(
+            popup_buttons_frame, text="Cancel", command=popup_window.destroy, button_type='red_button')
+        cancel_button.pack(side=LEFT)
 
     def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:

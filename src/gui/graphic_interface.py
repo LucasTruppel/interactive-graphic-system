@@ -106,38 +106,32 @@ class GraphicInterface:
             parent_frame, padx=10, pady=10)
         camera_controls_frame.pack(ipadx=10, ipady=10)
 
-        up_button = Button(camera_controls_frame,
-                           text="⬆", command=self.move_up)
-        down_button = Button(camera_controls_frame,
-                             text="⬇️", command=self.move_down)
-        left_button = Button(camera_controls_frame,
-                             text="⬅️", command=self.move_left)
-        right_button = Button(camera_controls_frame,
-                              text="➡️", command=self.move_right)
+        up_button = CustomButton(camera_controls_frame,
+                                 text="⬆", command=self.move_up, button_type='default_button')
+        down_button = CustomButton(camera_controls_frame,
+                                   text="⬇️", command=self.move_down, button_type='default_button')
+        left_button = CustomButton(camera_controls_frame,
+                                   text="⬅️", command=self.move_left, button_type='default_button')
+        right_button = CustomButton(camera_controls_frame,
+                                    text="➡️", command=self.move_right, button_type='default_button')
 
-        button_padding = 5
-
-        up_button.pack(side=TOP, padx=button_padding, pady=button_padding,
-                       ipadx=button_padding, ipady=button_padding)
-        down_button.pack(side=BOTTOM, padx=button_padding,
-                         pady=button_padding, ipadx=button_padding, ipady=button_padding)
-        left_button.pack(side=LEFT, padx=button_padding, pady=button_padding,
-                         ipadx=button_padding, ipady=button_padding)
-        right_button.pack(side=RIGHT, padx=button_padding,
-                          pady=button_padding, ipadx=button_padding, ipady=button_padding)
+        up_button.pack(side=TOP)
+        down_button.pack(side=BOTTOM)
+        left_button.pack(side=LEFT)
+        right_button.pack(side=RIGHT)
 
     def create_zoom_controls_frame(self, parent_frame: Frame) -> None:
         zoom_controls_frame = Frame(
             parent_frame, padx=10, pady=10)
         zoom_controls_frame.pack()
 
-        zoom_in_button = Button(zoom_controls_frame,
-                                text="Zoom In", command=self.zoom_in)
-        zoom_out_button = Button(
-            zoom_controls_frame, text="Zoom Out", command=self.zoom_out)
+        zoom_in_button = CustomButton(zoom_controls_frame,
+                                      text="Zoom In", command=self.zoom_in, button_type='default_button')
+        zoom_out_button = CustomButton(
+            zoom_controls_frame, text="Zoom Out", command=self.zoom_out, button_type='default_button')
 
-        zoom_in_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
-        zoom_out_button.pack(padx=5, pady=5, side=LEFT, ipadx=5, ipady=5)
+        zoom_in_button.pack(side=LEFT)
+        zoom_out_button.pack(side=LEFT)
 
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
