@@ -11,23 +11,23 @@ class GraphicSystem:
 
     def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file = []
-        self.window = Window(0, 0, width, height)
+        self.window = Window(0, 0, width, height, logger)
         self.viewport = Viewport(0, 0, width, height)
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
         self.logger = logger
 
     def viewport_transformation(self, point: Point) -> tuple[float, float]:
-        xw, yw = point.x, point.y
-        xvp = ((xw - self.window.x_min) / (self.window.x_max - self.window.x_min) *
-               (self.viewport.x_max - self.viewport.x_min))
-        yvp = ((1 - ((yw - self.window.y_min) / (self.window.y_max - self.window.y_min))) *
-               (self.viewport.y_max - self.viewport.y_min))
+        xw, yw = point.nx, point.ny
+        xvp = (xw + 1) / 2 * (self.viewport.x_max - self.viewport.x_min)
+        yvp = (1 - ((yw + 1) / 2)) * (self.viewport.y_max - self.viewport.y_min)
         return xvp, yvp
 
     def draw_display_file(self) -> None:
+        self.window.update_normalization_matrix()
         self.viewport_canvas.delete("all")
         for obj in self.display_file:
+            self.window.update_normalized_coordinates(obj)
             points_list = obj.get_points()
             match len(points_list):
                 case 1:
@@ -110,3 +110,7 @@ class GraphicSystem:
 
     def clear_transformation(self) -> None:
         self.transformation_handler.clear_transformation()
+
+    def rotate_window(self, angle):
+        self.window.rotate(angle)
+        self.draw_display_file()

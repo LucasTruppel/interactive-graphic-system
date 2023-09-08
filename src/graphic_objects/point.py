@@ -6,6 +6,8 @@ class Point(GraphicObject):
         super().__init__(name, color)
         self.x = x
         self.y = y
+        self.nx = x
+        self.ny = y
 
     def get_points(self) -> list['Point']:
         return [self]

@@ -17,6 +17,7 @@ class GraphicInterface:
         self.main_window = Tk()
         self.items_listbox = None
         self.console_text = None
+        self.viewport_canvas = None
         self.graphic_system = None
         self.logger = None
 
@@ -25,6 +26,9 @@ class GraphicInterface:
     def init_tkinter(self) -> None:
         self.configure_main_window()
         self.create_interface()
+        self.main_window.update()
+        self.graphic_system = GraphicSystem(self.viewport_canvas.winfo_width(), self.viewport_canvas.winfo_height(),
+                                            self.viewport_canvas, self.logger)
         self.main_window.mainloop()
 
     def configure_main_window(self) -> None:
@@ -47,6 +51,7 @@ class GraphicInterface:
         self.create_buttons_frame(left_frame)
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
+        self.create_window_rotation_frame(left_frame)
 
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_viewport_frame(right_frame)
@@ -64,9 +69,7 @@ class GraphicInterface:
         viewport_canvas = Canvas(
             viewport_frame, width=viewport_width, height=viewport_height, borderwidth=2, relief="solid")
         viewport_canvas.pack(fill=BOTH, expand=True)
-
-        self.graphic_system = GraphicSystem(
-            viewport_width, viewport_height, viewport_canvas, self.logger)
+        self.viewport_canvas = viewport_canvas
 
     def create_objects_list_frame(self, parent_frame: Frame) -> None:
         items_frame = Frame(parent_frame)
@@ -133,6 +136,19 @@ class GraphicInterface:
         zoom_in_button.pack(side=LEFT)
         zoom_out_button.pack(side=LEFT)
 
+    def create_window_rotation_frame(self, parent_frame: Frame) -> None:
+        rotation_controls_frame = Frame(
+            parent_frame, padx=10, pady=10)
+        rotation_controls_frame.pack()
+
+        rotate_left_button = CustomButton(rotation_controls_frame, text="Rotate counterclockwise",
+                                          command=lambda: self.rotate_window(10), button_type='default_button')
+        rotate_right_button = CustomButton(rotation_controls_frame, text="Rotate clockwise",
+                                           command=lambda: self.rotate_window(-10), button_type='default_button')
+
+        rotate_left_button.pack(side=LEFT)
+        rotate_right_button.pack(side=LEFT)
+
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
             messagebox.showerror("Remove Shape Error", "Select a shape")
@@ -166,3 +182,6 @@ class GraphicInterface:
         else:
             pos = self.items_listbox.curselection()[0]
             TransformPopup(self.main_window, self.graphic_system, pos)
+
+    def rotate_window(self, angle_degrees) -> None:
+        self.graphic_system.rotate_window(angle_degrees)
