@@ -1,10 +1,13 @@
+from tkinter import Canvas
+
 from system.window import Window
 from system.viewport import Viewport
 from graphic_objects.line import *
-from tkinter import Canvas
 from graphic_objects.wireframe import Wireframe
 from system.transformation_handler import TransformationHandler
 from gui.logger import Logger
+from obj_file.obj_transcriber import ObjTranscriber
+from utils.utils import get_object_center
 
 
 class GraphicSystem:
@@ -98,7 +101,7 @@ class GraphicSystem:
 
     def add_rotation(self, x: float, y: float, angle: float, rotation_type: str, object_index: int) -> None:
         if rotation_type == "object_center":
-            x, y = self.transformation_handler.get_object_center(self.display_file[object_index])
+            x, y = get_object_center(self.display_file[object_index])
         self.transformation_handler.add_rotation_matrix(x, y, angle)
 
     def remove_operation(self, operation_index: int) -> None:
@@ -111,6 +114,13 @@ class GraphicSystem:
     def clear_transformation(self) -> None:
         self.transformation_handler.clear_transformation()
 
-    def rotate_window(self, angle):
+    def rotate_window(self, angle: float) -> None:
         self.window.rotate(angle)
         self.draw_display_file()
+
+    def import_obj(self) -> None:
+        pass
+
+    def export_obj(self, file_path: str) -> None:
+        obj_transcriber = ObjTranscriber(file_path)
+        obj_transcriber.transcribre(self.display_file, self.window)

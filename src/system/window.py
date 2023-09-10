@@ -3,7 +3,7 @@ import numpy as np
 
 from graphic_objects.graphic_object import GraphicObject
 from graphic_objects.wireframe import Wireframe
-from utils.utils import rotate_vector, angle_between_vector_and_y_axis, distance_between_points
+from utils.utils import rotate_vector, angle_between_vector_and_y_axis, distance_between_points, get_object_center
 from system.transformation_handler import TransformationHandler
 from gui.logger import Logger
 
@@ -63,13 +63,13 @@ class Window(Wireframe):
 
     def rotate(self, angle_degrees) -> None:
         self.transformation_handler.clear_transformation()
-        wcx, wcy = self.transformation_handler.get_object_center(self)
+        wcx, wcy = get_object_center(self)
         self.transformation_handler.add_rotation_matrix(wcx, wcy, angle_degrees)
         self.transformation_handler.transform(self)
         self.vector = rotate_vector(self.vector, angle_degrees)
 
     def update_normalization_matrix(self) -> None:
-        cx, cy = self.transformation_handler.get_object_center(self)
+        cx, cy = get_object_center(self)
         angle_degrees = -1 * angle_between_vector_and_y_axis(self.vector)
         cos = math.cos(math.radians(angle_degrees))
         sin = math.sin(math.radians(angle_degrees))

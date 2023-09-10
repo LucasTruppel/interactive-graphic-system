@@ -1,5 +1,9 @@
+from pathlib import Path
 from tkinter import *
 from tkinter import messagebox
+from tkinter import filedialog as fd
+
+
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from system.graphic_system import GraphicSystem
@@ -25,6 +29,7 @@ class GraphicInterface:
 
     def init_tkinter(self) -> None:
         self.configure_main_window()
+        self.create_menubar()
         self.create_interface()
         self.main_window.update()
         self.graphic_system = GraphicSystem(self.viewport_canvas.winfo_width(), self.viewport_canvas.winfo_height(),
@@ -36,6 +41,14 @@ class GraphicInterface:
         self.main_window.geometry(f"{self.WIDTH}x{self.HEIGHT}")
         self.main_window.resizable(False, False)
         self.main_window.configure(bg=BG_COLOR)
+
+    def create_menubar(self) -> None:
+        menubar = Menu(self.main_window)
+        self.main_window.config(menu=menubar)
+        filemenu = Menu(menubar, tearoff=False)
+        filemenu.add_command(label="Import obj", command=lambda: self.import_obj())
+        filemenu.add_command(label="Export obj", command=lambda: self.export_obj())
+        menubar.add_cascade(label="File", menu=filemenu)
 
     def create_interface(self) -> None:
         left_frame = Frame(self.main_window)
@@ -183,5 +196,20 @@ class GraphicInterface:
             pos = self.items_listbox.curselection()[0]
             TransformPopup(self.main_window, self.graphic_system, pos)
 
-    def rotate_window(self, angle_degrees) -> None:
+    def rotate_window(self, angle_degrees: float) -> None:
         self.graphic_system.rotate_window(angle_degrees)
+
+    def import_obj(self) -> None:
+        self.graphic_system.import_obj()
+
+    def export_obj(self) -> None:
+        file_path = fd.asksaveasfilename(parent=self.main_window,
+                                         confirmoverwrite=False,
+                                         defaultextension=".obj",
+                                         initialdir=f"{Path.cwd()}/docs/obj_samples",
+                                         title="Save file",
+                                         filetypes=(("Object Files", "*.obj"), ("All files", '*.*')))
+        if file_path != "":
+            self.graphic_system.export_obj(file_path)
+            messagebox.showinfo(parent=self.main_window,
+                                message=f"World exported to {file_path}")

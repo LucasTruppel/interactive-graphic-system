@@ -1,0 +1,20 @@
+v 541.0 348.0 0.0
+v 1558.08 1002.2399999999998 0.0
+v 300.0 300.0 0.0
+v 500.0 500.0 0.0
+v 500.0 300.0 0.0
+v 100.0 100.0 0.0
+v 800.0 800.0 0.0
+v 800.0 100.0 0.0
+mtllib sample.mtl
+o window
+w 1 2
+o Triangle
+usemtl color1
+l 3 4 5 3 
+o Point
+usemtl color2
+p 6 
+o Line
+usemtl color3
+l 7 8 

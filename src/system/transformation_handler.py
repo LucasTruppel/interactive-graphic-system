@@ -3,7 +3,7 @@ import numpy as np
 from graphic_objects.graphic_object import GraphicObject
 from graphic_objects.point import Point
 from gui.logger import Logger
-from utils.utils import format_point_list
+from utils.utils import format_point_list, get_object_center
 
 
 class TransformationHandler:
@@ -42,7 +42,7 @@ class TransformationHandler:
                                          [dx, dy, 1]]))
 
     def add_scaling_matrix(self, graphic_object: GraphicObject, sx: float, sy: float) -> np.array:
-        xc, yc = self.get_object_center(graphic_object)
+        xc, yc = get_object_center(graphic_object)
         self.operations.append(np.array([[sx, 0, 0],
                                          [0, sy, 0],
                                          [xc-xc*sx, yc-yc*sy, 1]]))
@@ -56,16 +56,6 @@ class TransformationHandler:
 
     def remove_operation(self, pos: int) -> None:
         self.operations.pop(pos)
-
-    def get_object_center(self, graphic_object: GraphicObject) -> tuple[float, float]:
-        points_list = graphic_object.get_points()
-        x_sum = 0
-        y_sum = 0
-        for point in points_list:
-            x_sum += point.x
-            y_sum += point.y
-        n = len(points_list)
-        return x_sum/n, y_sum/n
 
     def clear_transformation(self) -> None:
         self.operations = []

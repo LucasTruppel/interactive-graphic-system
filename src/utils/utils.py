@@ -2,6 +2,7 @@ import math
 import numpy as np
 
 from graphic_objects.point import Point
+from graphic_objects.graphic_object import GraphicObject
 
 
 def format_point_list(points_list: list[tuple[float, float]]) -> str:
@@ -10,6 +11,17 @@ def format_point_list(points_list: list[tuple[float, float]]) -> str:
             .replace("]", "")
             .replace(".0,", ",")
             .replace(".0)", ")"))
+
+
+def get_object_center(graphic_object: GraphicObject) -> tuple[float, float]:
+    points_list = graphic_object.get_points()
+    x_sum = 0
+    y_sum = 0
+    for point in points_list:
+        x_sum += point.x
+        y_sum += point.y
+    n = len(points_list)
+    return x_sum/n, y_sum/n
 
 
 def angle_between_vector_and_y_axis(vector1: np.array) -> float:
