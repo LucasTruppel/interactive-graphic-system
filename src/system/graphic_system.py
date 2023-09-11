@@ -7,6 +7,7 @@ from graphic_objects.wireframe import Wireframe
 from system.transformation_handler import TransformationHandler
 from gui.logger import Logger
 from obj_file.obj_transcriber import ObjTranscriber
+from obj_file.obj_reader import ObjReader
 from utils.utils import get_object_center
 
 
@@ -118,8 +119,11 @@ class GraphicSystem:
         self.window.rotate(angle)
         self.draw_display_file()
 
-    def import_obj(self) -> None:
-        pass
+    def import_obj(self, file_path: str) -> list[str]:
+        obj_reader = ObjReader(file_path)
+        new_objects_list = obj_reader.read(self.display_file, self.window)
+        self.draw_display_file()
+        return list(map(lambda graphic_object: graphic_object.name, new_objects_list))
 
     def export_obj(self, file_path: str) -> None:
         obj_transcriber = ObjTranscriber(file_path)

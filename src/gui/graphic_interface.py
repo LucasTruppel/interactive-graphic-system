@@ -200,7 +200,17 @@ class GraphicInterface:
         self.graphic_system.rotate_window(angle_degrees)
 
     def import_obj(self) -> None:
-        self.graphic_system.import_obj()
+        file_path = fd.askopenfilename(parent=self.main_window,
+                                       defaultextension=".obj",
+                                       initialdir=f"{Path.cwd()}/docs/obj_samples",
+                                       title="Save file",
+                                       filetypes=(("Object Files", "*.obj"), ("All files", '*.*')))
+        if file_path != "":
+            objects_names = self.graphic_system.import_obj(file_path)
+            for name in objects_names:
+                self.items_listbox.insert("end", name)
+            messagebox.showinfo(parent=self.main_window,
+                                message=f"Objects imported from {file_path}")
 
     def export_obj(self) -> None:
         file_path = fd.asksaveasfilename(parent=self.main_window,
