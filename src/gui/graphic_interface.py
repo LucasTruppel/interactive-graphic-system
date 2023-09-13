@@ -7,7 +7,7 @@ from tkinter import filedialog as fd
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from system.graphic_system import GraphicSystem
-from gui.style import BG_COLOR, FG_COLOR, REMOVE_COLOR
+from gui.style import BG_COLOR
 from gui.logger import Logger
 from gui.custom_button import CustomButton
 
@@ -164,7 +164,9 @@ class GraphicInterface:
 
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
-            messagebox.showerror("Remove Shape Error", "Select a shape")
+            messagebox.showerror(parent=self.main_window,
+                                 title="Remove Shape Error",
+                                 message="Select a shape")
         else:
             pos = self.items_listbox.curselection()[0]
             self.items_listbox.delete(pos)
@@ -191,7 +193,9 @@ class GraphicInterface:
 
     def transform(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
-            messagebox.showerror("Transform Shape", "Select a shape")
+            messagebox.showerror(parent=self.main_window,
+                                 title="Transform Shape",
+                                 message="Select a shape")
         else:
             pos = self.items_listbox.curselection()[0]
             TransformPopup(self.main_window, self.graphic_system, pos)
@@ -203,13 +207,14 @@ class GraphicInterface:
         file_path = fd.askopenfilename(parent=self.main_window,
                                        defaultextension=".obj",
                                        initialdir=f"{Path.cwd()}/docs/obj_samples",
-                                       title="Save file",
+                                       title="Open file",
                                        filetypes=(("Object Files", "*.obj"), ("All files", '*.*')))
-        if file_path != "":
+        if file_path != "" and file_path != ():
             objects_names = self.graphic_system.import_obj(file_path)
             for name in objects_names:
                 self.items_listbox.insert("end", name)
             messagebox.showinfo(parent=self.main_window,
+                                title="Open file",
                                 message=f"Objects imported from {file_path}")
 
     def export_obj(self) -> None:
@@ -219,7 +224,8 @@ class GraphicInterface:
                                          initialdir=f"{Path.cwd()}/docs/obj_samples",
                                          title="Save file",
                                          filetypes=(("Object Files", "*.obj"), ("All files", '*.*')))
-        if file_path != "":
+        if file_path != "" and file_path != ():
             self.graphic_system.export_obj(file_path)
             messagebox.showinfo(parent=self.main_window,
+                                title="Save file",
                                 message=f"World exported to {file_path}")

@@ -1,9 +1,8 @@
 from tkinter import *
 from tkinter import messagebox, colorchooser
 from gui.entry_with_placeholder import EntryWithPlaceholder
-from gui.transform_popup import TransformPopup
 from system.graphic_system import GraphicSystem
-from gui.style import BG_COLOR, FG_COLOR
+from gui.style import BG_COLOR
 from gui.logger import Logger
 from utils.utils import format_point_list
 from gui.custom_button import CustomButton
@@ -101,20 +100,26 @@ class AddShapePopup:
                 points_list.append((x, y))
                 points_listbox.insert("end", f"({x:g}, {y:g})")
             else:
-                messagebox.showerror(
-                    "Add Point Error", "Point already registered")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Point Error",
+                                     message="Point already registered")
             x_entry.clear()
             y_entry.clear()
         except ValueError:
             if x_entry.get() == "" or y_entry.get() == "":
-                messagebox.showerror(
-                    "Add Point Error", "Point must be specified")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Point Error",
+                                     message="Point must be specified")
             else:
-                messagebox.showerror("Add Point Error", "Invalid character")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Point Error",
+                                     message="Invalid character")
 
     def remove_point(self, points_listbox: Listbox, points_list: list[tuple[float, float]]) -> None:
         if len(points_listbox.curselection()) == 0:
-            messagebox.showerror("Remove Point Error", "Select a point")
+            messagebox.showerror(parent=self.popup_window,
+                                 title="Remove Point Error",
+                                 message="Select a point")
         else:
             pos = points_listbox.curselection()[0]
             points_listbox.delete(pos)
@@ -144,8 +149,10 @@ class AddShapePopup:
                 self.logger.log(
                     f'Shape "{name}" created with points: {format_point_list(points_list)}.')
             else:
-                messagebox.showerror("Create Shape Error",
-                                     "Shape name must be specified")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Create Shape Error",
+                                     message="Shape name must be specified")
         else:
-            messagebox.showerror("Create Shape Error",
-                                 "At least one point is needed")
+            messagebox.showerror(parent=self.popup_window,
+                                 title="Create Shape Error",
+                                 message="At least one point is needed")

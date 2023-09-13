@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
+
 from gui.entry_with_placeholder import EntryWithPlaceholder
 from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
@@ -13,22 +14,22 @@ class TransformPopup:
         self.object_index = object_index
         self.selected_rotation = StringVar()
         self.operation_listbox = None
-        popup_window = Toplevel(root)
-        popup_window.attributes("-topmost", True)
-        self.init_popup(popup_window)
+        self.popup_window = Toplevel(root)
+        self.popup_window.attributes("-topmost", True)
+        self.init_popup()
 
-    def init_popup(self, popup_window) -> None:
+    def init_popup(self) -> None:
         self.graphic_system.clear_transformation()
-        self.configure_popup(popup_window)
-        main_popup_frame = Frame(popup_window)
+        self.configure_popup()
+        main_popup_frame = Frame(self.popup_window)
         main_popup_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
         self.create_right_column(main_popup_frame)
-        self.create_left_column(main_popup_frame, popup_window)
+        self.create_left_column(main_popup_frame)
 
-    def configure_popup(self, popup_window) -> None:
-        popup_window.title("Transform Shape")
-        popup_window.resizable(False, False)
-        popup_window.configure(bg=BG_COLOR)
+    def configure_popup(self) -> None:
+        self.popup_window.title("Transform Shape")
+        self.popup_window.resizable(False, False)
+        self.popup_window.configure(bg=BG_COLOR)
 
     def create_right_column(self, main_popup_frame) -> None:
         right_column_frame = Frame(main_popup_frame)
@@ -52,7 +53,7 @@ class TransformPopup:
             command=lambda: self.remove_operation(), button_type='red_button')
         remove_operation_button.pack()
 
-    def create_left_column(self, main_popup_frame, popup_window) -> None:
+    def create_left_column(self, main_popup_frame) -> None:
         # Left Column
         left_column_frame = Frame(main_popup_frame)
         left_column_frame.pack(side=LEFT, fill=BOTH,
@@ -147,17 +148,17 @@ class TransformPopup:
 
         # Bottom ok and cancel buttons frame
 
-        popup_buttons_frame = Frame(popup_window)
+        popup_buttons_frame = Frame(self.popup_window)
         popup_buttons_frame.pack(padx=5, pady=5, fill=X, side=RIGHT)
         popup_buttons_frame.configure(bg=BG_COLOR)
 
         tramsform_button = CustomButton(
             popup_buttons_frame, text="Transform",
-            command=lambda: self.transform_shape(self.operation_listbox.size(), popup_window), button_type='default_button')
+            command=lambda: self.transform_shape(self.operation_listbox.size(), self.popup_window), button_type='default_button')
         tramsform_button.pack(side=LEFT)
 
         cancel_button = CustomButton(
-            popup_buttons_frame, text="Cancel", command=lambda: self.cancel_transformation(popup_window), button_type='red_button')
+            popup_buttons_frame, text="Cancel", command=lambda: self.cancel_transformation(self.popup_window), button_type='red_button')
         cancel_button.pack(side=LEFT)
 
     def add_translation(self, dx_entry: EntryWithPlaceholder, dy_entry: EntryWithPlaceholder) -> None:
@@ -171,11 +172,13 @@ class TransformPopup:
             dy_entry.clear()
         except ValueError as e:
             if dx_entry.get() == "" or dy_entry.get() == "":
-                messagebox.showerror(
-                    "Add Translation Error", "Values must be specified")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Translation Error",
+                                     message="Values must be specified")
             else:
-                messagebox.showerror(
-                    "Add Translation Error", "Invalid character")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Translation Error",
+                                     message="Invalid character")
 
     def add_scaling(self, sx_entry: EntryWithPlaceholder, sy_entry: EntryWithPlaceholder) -> None:
         try:
@@ -188,10 +191,13 @@ class TransformPopup:
             sy_entry.clear()
         except ValueError as e:
             if sx_entry.get() == "" or sy_entry.get() == "":
-                messagebox.showerror(
-                    "Add Scaling Error", "Values must be specified")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Scaling Error",
+                                     message="Values must be specified")
             else:
-                messagebox.showerror("Add Scaling Error", "Invalid character")
+                messagebox.showerror(parent=self.popup_window,
+                                     title="Add Scaling Error",
+                                     message="Invalid character")
 
     def add_rotation(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder,
                      angle_entry: EntryWithPlaceholder) -> None:
@@ -219,8 +225,9 @@ class TransformPopup:
 
     def remove_operation(self) -> None:
         if len(self.operation_listbox.curselection()) == 0:
-            messagebox.showerror("Remove Operation Error",
-                                 "Select an operation")
+            messagebox.showerror(parent=self.popup_window,
+                                 title="Remove Operation Error",
+                                 message="Select an operation")
         else:
             pos = self.operation_listbox.curselection()[0]
             self.operation_listbox.delete(pos)
@@ -231,8 +238,9 @@ class TransformPopup:
             self.graphic_system.transform(self.object_index)
             popup_window.destroy()
         else:
-            messagebox.showerror(
-                "Transform Error", "At least one operation is needed")
+            messagebox.showerror(parent=self.popup_window,
+                                 title="Transform Error",
+                                 message="At least one operation is needed")
 
     def cancel_transformation(self, popup_window: Toplevel) -> None:
         self.graphic_system.clear_transformation()
