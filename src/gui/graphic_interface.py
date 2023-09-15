@@ -10,6 +10,7 @@ from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
 from gui.logger import Logger
 from gui.custom_button import CustomButton
+from gui.entry_with_placeholder import EntryWithPlaceholder
 
 
 class GraphicInterface:
@@ -154,11 +155,13 @@ class GraphicInterface:
             parent_frame, padx=10, pady=10)
         rotation_controls_frame.pack()
 
+        angle_entry = EntryWithPlaceholder(rotation_controls_frame, "Rotation angle (degrees)")
         rotate_left_button = CustomButton(rotation_controls_frame, text="Rotate counterclockwise",
-                                          command=lambda: self.rotate_window(10), button_type='default_button')
+                                          command=lambda: self.rotate_window(False, angle_entry), button_type='fixed_size')
         rotate_right_button = CustomButton(rotation_controls_frame, text="Rotate clockwise",
-                                           command=lambda: self.rotate_window(-10), button_type='default_button')
+                                           command=lambda: self.rotate_window(True, angle_entry), button_type='fixed_size')
 
+        angle_entry.pack(pady=(10, 5))
         rotate_left_button.pack(side=LEFT)
         rotate_right_button.pack(side=LEFT)
 
@@ -200,8 +203,12 @@ class GraphicInterface:
             pos = self.items_listbox.curselection()[0]
             TransformPopup(self.main_window, self.graphic_system, pos)
 
-    def rotate_window(self, angle_degrees: float) -> None:
-        self.graphic_system.rotate_window(angle_degrees)
+    def rotate_window(self, is_clockwize: bool, angle_entry: EntryWithPlaceholder) -> None:
+        if angle_entry.validate(True, False):
+            angle = float(angle_entry.get())
+        else:
+            angle = 10
+        self.graphic_system.rotate_window(-angle if is_clockwize else angle)
 
     def import_obj(self) -> None:
         file_path = fd.askopenfilename(parent=self.main_window,

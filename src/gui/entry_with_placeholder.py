@@ -34,18 +34,20 @@ class EntryWithPlaceholder(tk.Entry):
         self.root.focus_set()
         self.put_placeholder()
 
-    def validate(self, is_number: bool) -> bool:
+    def validate(self, is_number: bool, show_message: bool = True) -> bool:
         if self.get() == "" or self.get() == self.placeholder:
-            messagebox.showerror(parent=self.root,
-                                 title="Error",
-                                 message=f"Field {self.placeholder} must be specified")
+            if show_message:
+                messagebox.showerror(parent=self.root,
+                                     title="Error",
+                                     message=f"Field {self.placeholder} must be specified")
             return False
         if is_number:
             try:
                 float(self.get())
             except ValueError:
-                messagebox.showerror(parent=self.root,
-                                     title="Error",
-                                     message=f"Invalid character for {self.placeholder}.")
+                if show_message:
+                    messagebox.showerror(parent=self.root,
+                                         title="Error",
+                                         message=f"Invalid character for {self.placeholder}.")
                 return False
         return True
