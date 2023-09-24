@@ -9,8 +9,10 @@ from gui.logger import Logger
 from obj_file.obj_transcriber import ObjTranscriber
 from obj_file.obj_reader import ObjReader
 from utils.utils import get_object_center
-from clipping.cohen_sutherland import CohenSutherland
 from clipping.point_clipping import PointClipping
+from clipping.cohen_sutherland import CohenSutherland
+from clipping.liang_barsky import LiangBarsky
+
 
 
 class GraphicSystem:
@@ -33,7 +35,7 @@ class GraphicSystem:
                     if PointClipping.point_clipping(obj):
                         self.viewport.draw_point(obj)
                 case 2:
-                    if CohenSutherland.line_clipping(obj):
+                    if LiangBarsky.line_clipping(obj):
                         self.viewport.draw_line(obj)
                 case default:
                     self.viewport.draw_wireframe(obj)

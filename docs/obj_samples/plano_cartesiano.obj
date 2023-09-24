@@ -1,0 +1,19 @@
+v -6.599999999999909 -2.4729599999999152 0.0
+v 978.7392000000002 619.3152 0.0
+v 10000.0 0.0 0.0
+v -10000.0 0.0 0.0
+v 0.0 10000.0 0.0
+v 0.0 -10000.0 0.0
+v 0.0 0.0 0.0
+mtllib plano_cartesiano.mtl
+o window
+w 1 2
+o Eixo x
+usemtl color1
+l 3 4 
+o Eixo y
+usemtl color2
+l 5 6 
+o Origem
+usemtl color3
+p 7 
