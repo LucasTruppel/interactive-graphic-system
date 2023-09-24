@@ -81,7 +81,7 @@ class GraphicInterface:
         viewport_width = int(self.WIDTH * 0.75) - 2 * viewport_margin
         viewport_height = self.HEIGHT * 0.8 - 2 * viewport_margin
         viewport_canvas = Canvas(
-            viewport_frame, width=viewport_width, height=viewport_height, borderwidth=2, relief="solid")
+            viewport_frame, width=viewport_width, height=viewport_height, bg="#FFFFFF")
         viewport_canvas.pack(fill=BOTH, expand=True)
         self.viewport_canvas = viewport_canvas
 

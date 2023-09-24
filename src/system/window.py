@@ -18,6 +18,10 @@ class Window(Wireframe):
         self.vector = np.array([0, 1])
         self.transformation_handler = TransformationHandler(logger)
         self.normalization_matrix = None
+        self.nx_min = -1
+        self.nx_max = 1
+        self.ny_min = -1
+        self.ny_max = 1
 
     def move_up(self) -> None:
         shift = 0.2 * self.height
