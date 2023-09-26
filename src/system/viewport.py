@@ -11,6 +11,7 @@ class Viewport:
         self.x_max = x_max
         self.y_max = y_max
         self.viewport_canvas = viewport_canvas
+        self.draw_border()
 
     def viewport_transformation(self, point: Point) -> tuple[float, float]:
         xw, yw = point.nx, point.ny
@@ -20,9 +21,9 @@ class Viewport:
 
     def clear(self) -> None:
         self.viewport_canvas.delete("all")
-        self.draw_border()
 
     def update(self) -> None:
+        self.draw_border()
         self.viewport_canvas.update()
 
     def draw_border(self) -> None:
@@ -42,11 +43,19 @@ class Viewport:
         self.viewport_canvas.create_line(x1, y1, x2, y2, fill=line.color)
 
     def draw_wireframe(self, wireframe: Wireframe) -> None:
-        points_list = wireframe.get_points()
-        for i in range(len(points_list) - 1):
-            x1, y1 = self.viewport_transformation(points_list[i])
-            x2, y2 = self.viewport_transformation(points_list[i + 1])
+        if not wireframe.fill:
+            points_list = wireframe.get_points()
+            for i in range(len(points_list) - 1):
+                x1, y1 = self.viewport_transformation(points_list[i])
+                x2, y2 = self.viewport_transformation(points_list[i + 1])
+                self.viewport_canvas.create_line(x1, y1, x2, y2, fill=wireframe.color)
+            x1, y1 = self.viewport_transformation(points_list[len(points_list) - 1])
+            x2, y2 = self.viewport_transformation(points_list[0])
             self.viewport_canvas.create_line(x1, y1, x2, y2, fill=wireframe.color)
-        x1, y1 = self.viewport_transformation(points_list[len(points_list) - 1])
-        x2, y2 = self.viewport_transformation(points_list[0])
-        self.viewport_canvas.create_line(x1, y1, x2, y2, fill=wireframe.color)
+        else:
+            coords = []
+            for point in wireframe.get_points():
+                x, y = self.viewport_transformation(point)
+                coords.append(x)
+                coords.append(y)
+            self.viewport_canvas.create_polygon(coords, fill=wireframe.color)

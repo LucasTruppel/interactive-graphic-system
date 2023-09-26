@@ -1,0 +1,12 @@
+v 531.0 336.0 0.0
+v 1062 672 0.0
+v 100.0 100.0 0.0
+v 100.0 600.0 0.0
+v 600.0 600.0 0.0
+v 600.0 100.0 0.0
+mtllib square.mtl
+o window
+w 1 2
+o Square
+usemtl color1
+l 3 4 5 6 3 

@@ -12,6 +12,7 @@ from utils.utils import get_object_center
 from clipping.point_clipping import PointClipping
 from clipping.cohen_sutherland import CohenSutherland
 from clipping.liang_barsky import LiangBarsky
+from clipping.sutherland_hodgman import SutherlandHodgman
 
 
 
@@ -38,7 +39,9 @@ class GraphicSystem:
                     if LiangBarsky.line_clipping(obj):
                         self.viewport.draw_line(obj)
                 case default:
-                    self.viewport.draw_wireframe(obj)
+                    draw, new_obj = SutherlandHodgman.polygon_clipping(obj)
+                    if draw:
+                        self.viewport.draw_wireframe(new_obj)
         self.viewport.update()
 
     def move_up(self) -> None:
