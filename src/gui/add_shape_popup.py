@@ -74,8 +74,12 @@ class AddShapePopup:
                               height=20, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
-        color_button = CustomButton(name_and_color_frame, text="Pick a color",
-                                    command=lambda: self.pick_color(color_entry, color_canvas), button_type='default_button')
+        fill_shape_checkbox = Checkbutton(
+            name_and_color_frame, text="Fill Shape")
+        fill_shape_checkbox.pack(side=LEFT, padx=5)
+
+        color_button = CustomButton(
+            name_and_color_frame, text="Pick a color", button_type='default_button')
         color_button.pack(side=LEFT)
 
         # Add shape window confirm and cancel buttons frame
