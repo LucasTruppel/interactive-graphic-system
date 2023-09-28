@@ -6,6 +6,7 @@ from tkinter import filedialog as fd
 
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
+from gui.clipping_popup import ClippingPopup
 from system.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
 from gui.logger import Logger
@@ -47,8 +48,10 @@ class GraphicInterface:
         menubar = Menu(self.main_window)
         self.main_window.config(menu=menubar)
         filemenu = Menu(menubar, tearoff=False)
-        filemenu.add_command(label="Import obj", command=lambda: self.import_obj())
-        filemenu.add_command(label="Export obj", command=lambda: self.export_obj())
+        filemenu.add_command(label="Import obj",
+                             command=lambda: self.import_obj())
+        filemenu.add_command(label="Export obj",
+                             command=lambda: self.export_obj())
         menubar.add_cascade(label="File", menu=filemenu)
 
     def create_interface(self) -> None:
@@ -66,6 +69,7 @@ class GraphicInterface:
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
         self.create_window_rotation_frame(left_frame)
+        self.create_clipping_controls_frame(left_frame)
 
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_viewport_frame(right_frame)
@@ -155,7 +159,8 @@ class GraphicInterface:
             parent_frame, padx=10, pady=10)
         rotation_controls_frame.pack()
 
-        angle_entry = EntryWithPlaceholder(rotation_controls_frame, "Rotation angle (degrees)")
+        angle_entry = EntryWithPlaceholder(
+            rotation_controls_frame, "Rotation angle (degrees)")
         rotate_left_button = CustomButton(rotation_controls_frame, text="Rotate counterclockwise",
                                           command=lambda: self.rotate_window(False, angle_entry), button_type='fixed_size')
         rotate_right_button = CustomButton(rotation_controls_frame, text="Rotate clockwise",
@@ -164,6 +169,15 @@ class GraphicInterface:
         angle_entry.pack(pady=(10, 5))
         rotate_left_button.pack(side=LEFT)
         rotate_right_button.pack(side=LEFT)
+
+    def create_clipping_controls_frame(self, parent_frame: Frame) -> None:
+        clipping_controls_frame = Frame(
+            parent_frame, padx=10, pady=10)
+        clipping_controls_frame.pack()
+
+        clipping_options_button = CustomButton(
+            clipping_controls_frame, text="Clipping Options", command=lambda: ClippingPopup(self.main_window, self.graphic_system), button_type='default_button')
+        clipping_options_button.pack(side=LEFT)
 
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
