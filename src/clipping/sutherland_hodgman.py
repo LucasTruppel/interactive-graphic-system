@@ -24,7 +24,7 @@ class SutherlandHodgman:
             new_points = []
         if SutherlandHodgman.__is_window(points) or len(points) < 3:
             return False, None
-        return True, Wireframe(wireframe.name, wireframe.color, points)
+        return True, Wireframe(wireframe.name, wireframe.color, wireframe.fill, points)
 
     @staticmethod
     def __out_in(point1: tuple[float, float], point2: tuple[float, float], border: str,

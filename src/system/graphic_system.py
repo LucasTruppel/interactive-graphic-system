@@ -13,6 +13,8 @@ from clipping.point_clipping import PointClipping
 from clipping.cohen_sutherland import CohenSutherland
 from clipping.liang_barsky import LiangBarsky
 from clipping.sutherland_hodgman import SutherlandHodgman
+from clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
+
 
 
 
@@ -25,6 +27,9 @@ class GraphicSystem:
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
         self.logger = logger
+        self.point_clipping_state = PointClippingState.ENABLED
+        self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
+        self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -33,15 +38,27 @@ class GraphicSystem:
             self.window.update_normalized_coordinates(obj)
             match len(obj.get_points()):
                 case 1:
-                    if PointClipping.point_clipping(obj):
+                    if self.point_clipping_state == PointClippingState.ENABLED:
+                        if PointClipping.point_clipping(obj):
+                            self.viewport.draw_point(obj)
+                    else:
                         self.viewport.draw_point(obj)
                 case 2:
-                    if LiangBarsky.line_clipping(obj):
+                    if self.line_clipping_state == LineClippingState.COHEN_SUTHERLAND:
+                        if CohenSutherland.line_clipping(obj):
+                            self.viewport.draw_line(obj)
+                    elif self.line_clipping_state == LineClippingState.LIANG_BARSKY:
+                        if LiangBarsky.line_clipping(obj):
+                            self.viewport.draw_line(obj)
+                    else:
                         self.viewport.draw_line(obj)
                 case default:
-                    draw, new_obj = SutherlandHodgman.polygon_clipping(obj)
-                    if draw:
-                        self.viewport.draw_wireframe(new_obj)
+                    if self.polygon_clipping_state == PolygonClippingState.SUTHERLAND_HODGMAN:
+                        draw, new_obj = SutherlandHodgman.polygon_clipping(obj)
+                        if draw:
+                            self.viewport.draw_wireframe(new_obj)
+                    else:
+                        self.viewport.draw_wireframe(obj)
         self.viewport.update()
 
     def move_up(self) -> None:
@@ -68,7 +85,7 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str) -> None:
+    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool) -> None:
         match len(points_list):
             case 1:
                 x, y = points_list[0]
@@ -78,7 +95,7 @@ class GraphicSystem:
                 x2, y2 = points_list[1]
                 self.display_file.append(Line(name, color, x1, y1, x2, y2))
             case default:
-                self.display_file.append(Wireframe(name, color, points_list))
+                self.display_file.append(Wireframe(name, color, fill, points_list))
         self.draw_display_file()
 
     def remove_shape(self, pos: int) -> str:
@@ -121,3 +138,9 @@ class GraphicSystem:
     def export_obj(self, file_path: str) -> None:
         obj_transcriber = ObjTranscriber(file_path)
         obj_transcriber.transcribre(self.display_file, self.window)
+
+    def configure_clipping(self, point_clipping: int, line_clipping: int, polygon_clipping: int) -> None:
+        self.point_clipping_state = PointClippingState(point_clipping)
+        self.line_clipping_state = LineClippingState(line_clipping)
+        self.polygon_clipping_state = PolygonClippingState(polygon_clipping)
+        self.draw_display_file()

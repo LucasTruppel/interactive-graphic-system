@@ -74,12 +74,13 @@ class AddShapePopup:
                               height=20, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
-        fill_shape_checkbox = Checkbutton(
-            name_and_color_frame, text="Fill Shape")
+        fill = BooleanVar()
+        fill_shape_checkbox = Checkbutton(name_and_color_frame, text="Fill Shape", variable=fill)
         fill_shape_checkbox.pack(side=LEFT, padx=5)
 
         color_button = CustomButton(
-            name_and_color_frame, text="Pick a color", button_type='default_button')
+            name_and_color_frame, text="Pick a color", button_type='default_button',
+            command=lambda: self.pick_color(color_entry, color_canvas))
         color_button.pack(side=LEFT)
 
         # Add shape window confirm and cancel buttons frame
@@ -88,7 +89,8 @@ class AddShapePopup:
         popup_buttons_frame.configure(bg=BG_COLOR)
 
         create_button = CustomButton(
-            popup_buttons_frame, text="Create Shape", command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window), button_type='default_button')
+            popup_buttons_frame, text="Create Shape", button_type='default_button',
+            command=lambda: self.create_shape(points_list, name_entry, color_entry, fill.get(), popup_window))
         create_button.pack(side=LEFT)
 
         cancel_button = CustomButton(
@@ -141,13 +143,13 @@ class AddShapePopup:
         # Update the color of the canvas square
         color_canvas.configure(bg=color)
 
-    def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry,
+    def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry, fill: bool,
                      popup_window: Toplevel) -> None:
         name = name_entry.get()
         if len(points_list) > 0:
             if name != "" and name != "Name":
                 self.graphic_system.create_shape(
-                    points_list, name, color_entry.get())
+                    points_list, name, color_entry.get(), fill)
                 popup_window.destroy()
                 self.items_listbox.insert("end", name)
                 self.logger.log(

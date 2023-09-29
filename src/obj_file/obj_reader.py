@@ -81,6 +81,6 @@ class ObjReader:
             new_object = Line(self.current_object, self.current_color, x1, y1, x2, y2)
         else:
             point_list.pop()
-            new_object = Wireframe(self.current_object, self.current_color, point_list)
+            new_object = Wireframe(self.current_object, self.current_color, False, point_list)
         object_list.append(new_object)
         self.new_objects.append(new_object)

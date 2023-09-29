@@ -176,7 +176,8 @@ class GraphicInterface:
         clipping_controls_frame.pack()
 
         clipping_options_button = CustomButton(
-            clipping_controls_frame, text="Clipping Options", command=lambda: ClippingPopup(self.main_window, self.graphic_system), button_type='default_button')
+            clipping_controls_frame, text="Clipping Options", button_type='default_button',
+            command=lambda: ClippingPopup(self.main_window, self.graphic_system))
         clipping_options_button.pack(side=LEFT)
 
     def remove_shape(self) -> None:

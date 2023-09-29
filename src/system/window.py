@@ -11,7 +11,7 @@ from gui.logger import Logger
 class Window(Wireframe):
 
     def __init__(self, x_min: float, y_min: float, x_max: float, y_max: float, logger: Logger) -> None:
-        super().__init__("window", "#FFFFFF",
+        super().__init__("window", "#FFFFFF", False,
                          [(x_min, y_min), (x_min, y_max), (x_max, y_max), (x_max, y_min)])
         self.width = x_max - x_min
         self.height = y_max - y_min
