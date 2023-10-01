@@ -1,5 +1,4 @@
-from graphic_objects.line import Line
-from graphic_objects.point import Point
+from system.graphic_objects.line import Line
 
 
 class LiangBarsky:

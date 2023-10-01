@@ -1,11 +1,11 @@
 from pathlib import Path
 import numpy as np
 
-from graphic_objects.graphic_object import GraphicObject
-from system.window import Window
-from graphic_objects.point import Point
-from graphic_objects.line import Line
-from graphic_objects.wireframe import Wireframe
+from system.graphic_objects.graphic_object import GraphicObject
+from system.core.window import Window
+from system.graphic_objects.point import Point
+from system.graphic_objects.line import Line
+from system.graphic_objects.wireframe import Wireframe
 
 
 class ObjReader:

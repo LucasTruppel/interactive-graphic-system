@@ -1,4 +1,4 @@
-from graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.graphic_object import GraphicObject
 
 
 class Point(GraphicObject):

@@ -1,7 +1,7 @@
 from tkinter import *
 
-from clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
-from system.graphic_system import GraphicSystem
+from system.clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
+from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
 from gui.custom_button import CustomButton
 

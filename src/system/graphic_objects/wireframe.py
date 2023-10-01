@@ -1,5 +1,5 @@
-from graphic_objects.graphic_object import GraphicObject
-from graphic_objects.point import Point
+from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.point import Point
 
 
 class Wireframe(GraphicObject):

@@ -1,8 +1,8 @@
 import math
 import numpy as np
 
-from graphic_objects.point import Point
-from graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.point import Point
+from system.graphic_objects.graphic_object import GraphicObject
 
 
 def format_point_list(points_list: list[tuple[float, float]]) -> str:

@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from graphic_objects.graphic_object import GraphicObject
-from graphic_objects.point import Point
-from system.window import Window
+from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.point import Point
+from system.core.window import Window
 from utils.utils import get_object_center
 
 

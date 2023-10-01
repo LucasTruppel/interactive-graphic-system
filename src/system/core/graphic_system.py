@@ -1,19 +1,19 @@
 from tkinter import Canvas
 
-from system.window import Window
-from system.viewport import Viewport
-from graphic_objects.line import *
-from graphic_objects.wireframe import Wireframe
-from system.transformation_handler import TransformationHandler
+from system.core.window import Window
+from system.core.viewport import Viewport
+from system.graphic_objects.line import *
+from system.graphic_objects.wireframe import Wireframe
+from system.core.transformation_handler import TransformationHandler
 from gui.logger import Logger
-from obj_file.obj_transcriber import ObjTranscriber
-from obj_file.obj_reader import ObjReader
+from system.obj_file.obj_transcriber import ObjTranscriber
+from system.obj_file.obj_reader import ObjReader
 from utils.utils import get_object_center
-from clipping.point_clipping import PointClipping
-from clipping.cohen_sutherland import CohenSutherland
-from clipping.liang_barsky import LiangBarsky
-from clipping.sutherland_hodgman import SutherlandHodgman
-from clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
+from system.clipping.point_clipping import PointClipping
+from system.clipping.cohen_sutherland import CohenSutherland
+from system.clipping.liang_barsky import LiangBarsky
+from system.clipping.sutherland_hodgman import SutherlandHodgman
+from system.clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
 
 
 

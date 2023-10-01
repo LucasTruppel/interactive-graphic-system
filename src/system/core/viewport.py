@@ -1,7 +1,7 @@
 from tkinter import Canvas
-from graphic_objects.point import Point
-from graphic_objects.line import Line
-from graphic_objects.wireframe import Wireframe
+from system.graphic_objects.point import Point
+from system.graphic_objects.line import Line
+from system.graphic_objects.wireframe import Wireframe
 
 
 class Viewport:

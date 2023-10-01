@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox, colorchooser
 from gui.entry_with_placeholder import EntryWithPlaceholder
-from system.graphic_system import GraphicSystem
+from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
 from gui.logger import Logger
 from utils.utils import format_point_list

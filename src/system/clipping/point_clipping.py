@@ -1,4 +1,4 @@
-from graphic_objects.point import Point
+from system.graphic_objects.point import Point
 
 
 class PointClipping:

@@ -1,10 +1,10 @@
 import math
 import numpy as np
 
-from graphic_objects.graphic_object import GraphicObject
-from graphic_objects.wireframe import Wireframe
+from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.wireframe import Wireframe
 from utils.utils import rotate_vector, angle_between_vector_and_y_axis, distance_between_points, get_object_center
-from system.transformation_handler import TransformationHandler
+from system.core.transformation_handler import TransformationHandler
 from gui.logger import Logger
 
 

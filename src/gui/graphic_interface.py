@@ -7,7 +7,7 @@ from tkinter import filedialog as fd
 from gui.transform_popup import TransformPopup
 from gui.add_shape_popup import AddShapePopup
 from gui.clipping_popup import ClippingPopup
-from system.graphic_system import GraphicSystem
+from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
 from gui.logger import Logger
 from gui.custom_button import CustomButton

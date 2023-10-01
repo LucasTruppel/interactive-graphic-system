@@ -1,5 +1,4 @@
-from graphic_objects.wireframe import Wireframe
-from graphic_objects.point import Point
+from system.graphic_objects.wireframe import Wireframe
 
 
 class SutherlandHodgman:
