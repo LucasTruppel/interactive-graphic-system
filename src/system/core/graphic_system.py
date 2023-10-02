@@ -4,6 +4,7 @@ from system.core.window import Window
 from system.core.viewport import Viewport
 from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
+from system.graphic_objects.bezier_curve import BezierCurve
 from system.core.transformation_handler import TransformationHandler
 from gui.logger import Logger
 from system.obj_file.obj_transcriber import ObjTranscriber
@@ -14,8 +15,6 @@ from system.clipping.cohen_sutherland import CohenSutherland
 from system.clipping.liang_barsky import LiangBarsky
 from system.clipping.sutherland_hodgman import SutherlandHodgman
 from system.clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
-
-
 
 
 class GraphicSystem:
@@ -36,30 +35,45 @@ class GraphicSystem:
         self.viewport.clear()
         for obj in self.display_file:
             self.window.update_normalized_coordinates(obj)
-            match len(obj.get_points()):
-                case 1:
-                    if self.point_clipping_state == PointClippingState.ENABLED:
-                        if PointClipping.point_clipping(obj):
-                            self.viewport.draw_point(obj)
-                    else:
-                        self.viewport.draw_point(obj)
-                case 2:
-                    if self.line_clipping_state == LineClippingState.COHEN_SUTHERLAND:
-                        if CohenSutherland.line_clipping(obj):
-                            self.viewport.draw_line(obj)
-                    elif self.line_clipping_state == LineClippingState.LIANG_BARSKY:
-                        if LiangBarsky.line_clipping(obj):
-                            self.viewport.draw_line(obj)
-                    else:
-                        self.viewport.draw_line(obj)
-                case default:
-                    if self.polygon_clipping_state == PolygonClippingState.SUTHERLAND_HODGMAN:
-                        draw, new_obj = SutherlandHodgman.polygon_clipping(obj)
-                        if draw:
-                            self.viewport.draw_wireframe(new_obj)
-                    else:
-                        self.viewport.draw_wireframe(obj)
+            match obj.__class__.__name__:
+                case "Point":
+                    self.draw_point(obj)
+                case "Line":
+                    self.draw_line(obj)
+                case "Wireframe":
+                    self.draw_wireframe(obj)
+                case "BezierCurve":
+                    self.draw_curve(obj)
         self.viewport.update()
+
+    def draw_point(self, obj: GraphicObject) -> None:
+        if self.point_clipping_state == PointClippingState.ENABLED:
+            if PointClipping.point_clipping(obj):
+                self.viewport.draw_point(obj)
+        else:
+            self.viewport.draw_point(obj)
+
+    def draw_line(self, obj: GraphicObject) -> None:
+        if self.line_clipping_state == LineClippingState.COHEN_SUTHERLAND:
+            if CohenSutherland.line_clipping(obj):
+                self.viewport.draw_line(obj)
+        elif self.line_clipping_state == LineClippingState.LIANG_BARSKY:
+            if LiangBarsky.line_clipping(obj):
+                self.viewport.draw_line(obj)
+        else:
+            self.viewport.draw_line(obj)
+
+    def draw_wireframe(self, obj: GraphicObject) -> None:
+        if self.polygon_clipping_state == PolygonClippingState.SUTHERLAND_HODGMAN:
+            draw, new_obj = SutherlandHodgman.polygon_clipping(obj)
+            if draw:
+                self.viewport.draw_wireframe(new_obj)
+        else:
+            self.viewport.draw_wireframe(obj)
+
+    def draw_curve(self, obj: GraphicObject) -> None:
+        clipping_on = self.line_clipping_state != LineClippingState.DISABLED
+        self.viewport.draw_curve(obj, clipping_on)
 
     def move_up(self) -> None:
         self.window.move_up()
@@ -85,7 +99,8 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool) -> None:
+    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool, is_curve: bool) \
+            -> None:
         match len(points_list):
             case 1:
                 x, y = points_list[0]
@@ -95,7 +110,11 @@ class GraphicSystem:
                 x2, y2 = points_list[1]
                 self.display_file.append(Line(name, color, x1, y1, x2, y2))
             case default:
-                self.display_file.append(Wireframe(name, color, fill, points_list))
+                if not is_curve:
+                    self.display_file.append(Wireframe(name, color, fill, points_list))
+                else:
+                    self.display_file.append(BezierCurve(name, color, points_list))
+
         self.draw_display_file()
 
     def remove_shape(self, pos: int) -> str:

@@ -78,6 +78,10 @@ class AddShapePopup:
         fill_shape_checkbox = Checkbutton(name_and_color_frame, text="Fill Shape", variable=fill)
         fill_shape_checkbox.pack(side=LEFT, padx=5)
 
+        is_curve = BooleanVar()
+        curve_checkbox = Checkbutton(name_and_color_frame, text="Curve", variable=is_curve)
+        curve_checkbox.pack(side=LEFT, padx=5)
+
         color_button = CustomButton(
             name_and_color_frame, text="Pick a color", button_type='default_button',
             command=lambda: self.pick_color(color_entry, color_canvas))
@@ -90,7 +94,7 @@ class AddShapePopup:
 
         create_button = CustomButton(
             popup_buttons_frame, text="Create Shape", button_type='default_button',
-            command=lambda: self.create_shape(points_list, name_entry, color_entry, fill.get(), popup_window))
+            command=lambda: self.create_shape(points_list, name_entry, color_entry, fill.get(), is_curve.get(), popup_window))
         create_button.pack(side=LEFT)
 
         cancel_button = CustomButton(
@@ -144,21 +148,23 @@ class AddShapePopup:
         color_canvas.configure(bg=color)
 
     def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry, fill: bool,
-                     popup_window: Toplevel) -> None:
+                     is_curve: bool, popup_window: Toplevel) -> None:
         name = name_entry.get()
-        if len(points_list) > 0:
-            if name != "" and name != "Name":
-                self.graphic_system.create_shape(
-                    points_list, name, color_entry.get(), fill)
-                popup_window.destroy()
-                self.items_listbox.insert("end", name)
-                self.logger.log(
-                    f'Shape "{name}" created with points: {format_point_list(points_list)}.')
-            else:
-                messagebox.showerror(parent=self.popup_window,
-                                     title="Create Shape Error",
-                                     message="Shape name must be specified")
-        else:
-            messagebox.showerror(parent=self.popup_window,
-                                 title="Create Shape Error",
+        if len(points_list) <= 0:
+            messagebox.showerror(parent=self.popup_window,title="Create Shape Error",
                                  message="At least one point is needed")
+            return
+        if name == "" or name == "Name":
+            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
+                                 message="Shape name must be specified")
+            return
+        if is_curve and not ((len(points_list) >= 4) and ((len(points_list) - 4) % 3 == 0)):
+            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
+                                 message="Curve must have a point amount (a) that follows:\n "
+                                         "a = 4 + 3n  |  n = 0, 1, 2, ...")
+            return
+        self.graphic_system.create_shape(points_list, name, color_entry.get(), fill, is_curve)
+        popup_window.destroy()
+        self.items_listbox.insert("end", name)
+        self.logger.log(
+            f'Shape "{name}" created with points: {format_point_list(points_list)}.')
