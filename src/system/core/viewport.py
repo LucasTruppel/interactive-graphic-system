@@ -4,7 +4,7 @@ from system.clipping.cohen_sutherland import CohenSutherland
 from system.graphic_objects.point import Point
 from system.graphic_objects.line import Line
 from system.graphic_objects.wireframe import Wireframe
-from system.graphic_objects.bezier_curve import BezierCurve
+from system.graphic_objects.graphic_object import GraphicObject
 
 
 class Viewport:
@@ -63,11 +63,11 @@ class Viewport:
                 coords.append(y)
             self.viewport_canvas.create_polygon(coords, fill=wireframe.color)
 
-    def draw_curve(self, curve: BezierCurve, clipping_on: bool) -> None:
+    def draw_curve(self, curve: GraphicObject, clipping_on: bool) -> None:
         points_list = curve.get_points()
         for i in range(len(points_list) - 1):
             point1 = points_list[i]
             point2 = points_list[i+1]
-            line = Line("", point1.color, point1, point2)
+            line = Line.line_from_points("", point1.color, point1, point2)
             if not clipping_on or CohenSutherland.line_clipping(line):
                 self.draw_line(line)

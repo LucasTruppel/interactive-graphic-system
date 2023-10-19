@@ -2,9 +2,11 @@ from tkinter import Canvas
 
 from system.core.window import Window
 from system.core.viewport import Viewport
+from system.graphic_objects.graphic_object import GraphicObjectType
 from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
 from system.graphic_objects.bezier_curve import BezierCurve
+from system.graphic_objects.b_spline import BSpline
 from system.core.transformation_handler import TransformationHandler
 from gui.logger import Logger
 from system.obj_file.obj_transcriber import ObjTranscriber
@@ -36,13 +38,15 @@ class GraphicSystem:
         for obj in self.display_file:
             self.window.update_normalized_coordinates(obj)
             match obj.__class__.__name__:
-                case "Point":
+                case Point.__name__:
                     self.draw_point(obj)
-                case "Line":
+                case Line.__name__:
                     self.draw_line(obj)
-                case "Wireframe":
+                case Wireframe.__name__:
                     self.draw_wireframe(obj)
-                case "BezierCurve":
+                case BezierCurve.__name__:
+                    self.draw_curve(obj)
+                case BSpline.__name__:
                     self.draw_curve(obj)
         self.viewport.update()
 
@@ -99,21 +103,22 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool, is_curve: bool) \
-            -> None:
-        match len(points_list):
-            case 1:
+    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool,
+                     object_type: str) -> None:
+        match object_type:
+            case GraphicObjectType.POINT:
                 x, y = points_list[0]
                 self.display_file.append(Point(name, color, x, y))
-            case 2:
+            case GraphicObjectType.LINE:
                 x1, y1 = points_list[0]
                 x2, y2 = points_list[1]
                 self.display_file.append(Line(name, color, x1, y1, x2, y2))
-            case default:
-                if not is_curve:
-                    self.display_file.append(Wireframe(name, color, fill, points_list))
-                else:
-                    self.display_file.append(BezierCurve(name, color, points_list))
+            case GraphicObjectType.POLYGON:
+                self.display_file.append(Wireframe(name, color, fill, points_list))
+            case GraphicObjectType.BEZIER_CURVE:
+                self.display_file.append(BezierCurve(name, color, points_list))
+            case GraphicObjectType.B_SPLINE_CURVE:
+                self.display_file.append(BSpline(name, color, points_list))
 
         self.draw_display_file()
 

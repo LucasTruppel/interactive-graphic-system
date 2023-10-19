@@ -11,12 +11,12 @@ class BezierCurve(GraphicObject):
         self.points = []
         self.Mb = np.array([[-1, 3, -3, 1], [3, -6, 3, 0], [-3, 3, 0, 0], [1, 0, 0, 0]])
 
-        self.define_points(coordinates_list)
+        self.__define_points(coordinates_list)
 
     def get_points(self) -> list[Point]:
         return self.points
 
-    def define_points(self, coordinates_list: list[tuple[float, float]]) -> None:
+    def __define_points(self, coordinates_list: list[tuple[float, float]]) -> None:
         pace = 0.05
         for i in range(0, len(coordinates_list), 3):
             if i + 3 > len(coordinates_list) - 1:
