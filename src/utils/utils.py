@@ -24,6 +24,19 @@ def get_object_center(graphic_object: GraphicObject) -> tuple[float, float]:
     return x_sum/n, y_sum/n
 
 
+def get_object_center_3d(graphic_object: GraphicObject) -> tuple[float, float, float]:
+    points_list = graphic_object.get_points()
+    x_sum = 0
+    y_sum = 0
+    z_sum = 0
+    for point in points_list:
+        x_sum += point.x
+        y_sum += point.y
+        z_sum += point.z
+    n = len(points_list)
+    return x_sum/n, y_sum/n, z_sum/n
+
+
 def angle_between_vector_and_y_axis(vector1: np.array) -> float:
     y_axis = np.array([0, 1])
     dot_product = np.dot(vector1, y_axis)

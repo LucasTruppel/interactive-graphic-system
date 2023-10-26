@@ -12,9 +12,20 @@ class GraphicObject(ABC):
         pass
 
 
+class GraphicObject3d(GraphicObject, ABC):
+
+    def __init__(self, name: str, color: str) -> None:
+        super().__init__(name, color)
+
+    @abstractmethod
+    def get_points(self) -> list['Point3d']:
+        pass
+
+
 class GraphicObjectType:
     POINT = "Point"
     LINE = "Line"
     POLYGON = "Polygon"
     BEZIER_CURVE = "Bezier Curve"
     B_SPLINE_CURVE = "B-Spline Curve"
+
