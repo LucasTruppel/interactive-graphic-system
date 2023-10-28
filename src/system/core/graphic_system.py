@@ -47,6 +47,7 @@ class GraphicSystem:
                  (1000, 1000, 0), (1000, -1000, 0),
                  (1000, -1000, 0), (-1000, -1000, 0)]
         self.display_file.append(Object3d("", "#000000", cords))
+        self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
         self.draw_display_file()
 
     def draw_display_file(self) -> None:
@@ -68,7 +69,7 @@ class GraphicSystem:
                 case BSpline.__name__:
                     self.draw_curve(obj)
                 case Point3d.__name__:
-                    self.draw_point3d(obj)
+                    self.draw_point(obj)
                 case Object3d.__name__:
                     self.draw_object3d(obj)
         self.viewport.update()
@@ -101,6 +102,10 @@ class GraphicSystem:
     def draw_curve(self, obj: GraphicObject) -> None:
         clipping_on = self.line_clipping_state != LineClippingState.DISABLED
         self.viewport.draw_curve(obj, clipping_on)
+
+    def draw_object3d(self, obj: Object3d) -> None:
+        clipping_on = self.line_clipping_state != LineClippingState.DISABLED
+        self.viewport.draw_object3d(obj, clipping_on)
 
     def move_up(self) -> None:
         self.window.move_up()
@@ -191,9 +196,3 @@ class GraphicSystem:
         self.line_clipping_state = LineClippingState(line_clipping)
         self.polygon_clipping_state = PolygonClippingState(polygon_clipping)
         self.draw_display_file()
-
-    def draw_point3d(self, obj: Point3d):
-        pass
-
-    def draw_object3d(self, obj: Object3d):
-        self.viewport.draw_object3d(obj)

@@ -8,7 +8,6 @@ from utils.math_utils import MathUtils
 from utils.utils import (rotate_vector, angle_between_vector_and_y_axis, distance_between_points, get_object_center,
                          get_object_center_3d)
 from system.core.transformation_handler_3d import TransformationHandler3d
-from gui.logger import Logger
 
 
 class Window(Object3d):
@@ -80,7 +79,7 @@ class Window(Object3d):
         xc, yc, zc = get_object_center_3d(self)
         self.transformation_handler.clear_transformation()
         self.horizontal_rotation_axis = is_horizontal
-        rotation_matrix = self.transformation_handler.add_rotation_matrix(self, angle_degrees)
+        rotation_matrix = self.transformation_handler.add_arbitrary_rotation_matrix(self, angle_degrees)
         self.transformation_handler.transform(self)
         self.update_vpn(xc, yc, zc, rotation_matrix)
 

@@ -73,9 +73,11 @@ class Viewport:
             if not clipping_on or CohenSutherland.line_clipping(line):
                 self.draw_line(line)
 
-    def draw_object3d(self, obj: Object3d) -> None:
+    def draw_object3d(self, obj: Object3d, clipping_on: bool) -> None:
         points_list = obj.get_points()
         for i in range(0, len(points_list), 2):
-            x1, y1 = self.viewport_transformation(points_list[i])
-            x2, y2 = self.viewport_transformation(points_list[i + 1])
-            self.viewport_canvas.create_line(x1, y1, x2, y2, fill=obj.color)
+            point1 = points_list[i]
+            point2 = points_list[i+1]
+            line = Line.line_from_points("", point1.color, point1, point2)
+            if not clipping_on or CohenSutherland.line_clipping(line):
+                self.draw_line(line)
