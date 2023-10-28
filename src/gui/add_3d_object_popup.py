@@ -10,11 +10,12 @@ from utils.utils import format_point_list
 from gui.custom_button import CustomButton
 
 
-class AddShapePopup:
+class Add3DObjectPopup:
 
     option_1 = (GraphicObjectType.POINT,)
     option_2 = (GraphicObjectType.LINE,)
-    option_3 = (GraphicObjectType.POLYGON, GraphicObjectType.BEZIER_CURVE, GraphicObjectType.B_SPLINE_CURVE)
+    option_3 = (GraphicObjectType.POLYGON,
+                GraphicObjectType.BEZIER_CURVE, GraphicObjectType.B_SPLINE_CURVE)
 
     def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger) -> None:
         self.graphic_system = graphic_system
@@ -49,23 +50,46 @@ class AddShapePopup:
 
         # Frame for entering coordinates and adding points
         entry_frame = Frame(popup_window)
-        entry_frame.pack(fill=X, padx=10, pady=(0, 10))
+        entry_frame.pack(fill=X, padx=10, pady=10)
         entry_frame.configure(bg=BG_COLOR)
 
-        x_entry = EntryWithPlaceholder(entry_frame, "x")
-        y_entry = EntryWithPlaceholder(entry_frame, "y")
+        # Frame for entering the two points that will create a line segment
+        line_segment_frame = Frame(entry_frame)
+        line_segment_frame.pack(fill=X, padx=10, pady=10, side=LEFT)
+        # point a, upper entries
+        point_a_frame = Frame(line_segment_frame)
+        point_a_frame.pack(fill=X, padx=10, pady=10)
+        point_a_frame.configure(bg=BG_COLOR)
 
-        x_entry.pack(side=LEFT, padx=(0, 10), expand=True)
-        y_entry.pack(side=LEFT, padx=(0, 10), expand=True)
+        x_entry_a = EntryWithPlaceholder(point_a_frame, "x")
+        y_entry_a = EntryWithPlaceholder(point_a_frame, "y")
+        z_entry_a = EntryWithPlaceholder(point_a_frame, "z")
+
+        x_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
+        y_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
+        z_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
+
+        # point b, lower entries
+        point_b_frame = Frame(line_segment_frame)
+        point_b_frame.pack(fill=X, padx=10, pady=10)
+        point_b_frame.configure(bg=BG_COLOR)
+
+        x_entry_b = EntryWithPlaceholder(point_b_frame, "x")
+        y_entry_b = EntryWithPlaceholder(point_b_frame, "y")
+        z_entry_b = EntryWithPlaceholder(point_b_frame, "z")
+
+        x_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
+        y_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
+        z_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
 
         points_list = []
-        add_button = CustomButton(entry_frame, text="Add Point",
-                                  command=lambda: self.add_point(x_entry, y_entry, points_listbox, points_list), button_type='default_button')
+        add_button = CustomButton(entry_frame, text="Add Line",
+                                  command=lambda: self.add_point(x_entry_a, y_entry_a, z_entry_a, points_listbox, points_list), button_type='default_button')
         add_button.pack(side=LEFT)
 
         # CustomButton to remove selected point
         remove_button = CustomButton(
-            entry_frame, text="Remove Selected Point", command=lambda: self.remove_point(points_listbox, points_list), button_type='red_button')
+            entry_frame, text="Remove Selected Line", command=lambda: self.remove_point(points_listbox, points_list), button_type='red_button')
         remove_button.pack(side=LEFT)
 
         # Name entry and pick color button frame
@@ -82,15 +106,17 @@ class AddShapePopup:
                               height=20, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
-        fill = BooleanVar()
-        fill_shape_checkbox = Checkbutton(name_and_color_frame, text="Fill Shape", variable=fill)
-        fill_shape_checkbox.pack(side=LEFT, padx=5)
+        # fill = BooleanVar()
+        # fill_shape_checkbox = Checkbutton(
+        #     name_and_color_frame, text="Fill Shape", variable=fill)
+        # fill_shape_checkbox.pack(side=LEFT, padx=5)
 
-        self.type_var = StringVar()
-        self.combobox = ttk.Combobox(name_and_color_frame, textvariable=self.type_var, state="readonly")
-        self.combobox["values"] = self.option_1
-        self.combobox.current(0)
-        self.combobox.pack(side=LEFT, padx=5)
+        # self.type_var = StringVar()
+        # self.combobox = ttk.Combobox(
+        #     name_and_color_frame, textvariable=self.type_var, state="readonly")
+        # self.combobox["values"] = self.option_1
+        # self.combobox.current(0)
+        # self.combobox.pack(side=LEFT, padx=5)
 
         color_button = CustomButton(
             name_and_color_frame, text="Pick a color", button_type='default_button',
@@ -112,15 +138,17 @@ class AddShapePopup:
             popup_buttons_frame, text="Cancel", command=popup_window.destroy, button_type='red_button')
         cancel_button.pack(side=LEFT)
 
-    def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, points_listbox: Listbox,
+    def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, z_entry: EntryWithPlaceholder, points_listbox: Listbox,
                   points_list: list[tuple[float, float]]) -> None:
         try:
             x = float(x_entry.get())
             y = float(y_entry.get())
-            points_list.append((x, y))
-            points_listbox.insert("end", f"({x:g}, {y:g})")
+            z = float(z_entry.get())
+            points_list.append((x, y, z))
+            points_listbox.insert("end", f"({x:g}, {y:g}, {z:g})")
             x_entry.clear()
             y_entry.clear()
+            z_entry.clear()
             if len(points_list) == 0 or len(points_list) == 1:
                 self.combobox["values"] = self.option_1
                 self.combobox.current(0)
@@ -131,19 +159,19 @@ class AddShapePopup:
                 self.combobox["values"] = self.option_3
                 self.combobox.current(0)
         except ValueError:
-            if x_entry.get() == "" or y_entry.get() == "":
+            if x_entry.get() == "" or y_entry.get() == "" or z_entry.get() == "":
                 messagebox.showerror(parent=self.popup_window,
-                                     title="Add Point Error",
-                                     message="Point must be specified")
+                                     title="Add Line Error",
+                                     message="Line must be specified")
             else:
                 messagebox.showerror(parent=self.popup_window,
-                                     title="Add Point Error",
+                                     title="Add Line Error",
                                      message="Invalid character")
 
     def remove_point(self, points_listbox: Listbox, points_list: list[tuple[float, float]]) -> None:
         if len(points_listbox.curselection()) == 0:
             messagebox.showerror(parent=self.popup_window,
-                                 title="Remove Point Error",
+                                 title="Remove Line Error",
                                  message="Select a point")
         else:
             pos = points_listbox.curselection()[0]
@@ -172,7 +200,7 @@ class AddShapePopup:
                      object_type: str, popup_window: Toplevel) -> None:
         name = name_entry.get()
         if len(points_list) <= 0:
-            messagebox.showerror(parent=self.popup_window,title="Create Shape Error",
+            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
                                  message="At least one point is needed")
             return
         if name == "" or name == "Name":
@@ -189,7 +217,8 @@ class AddShapePopup:
             messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
                                  message="B-Spline Curve must have at least 4 points")
             return
-        self.graphic_system.create_shape(points_list, name, color_entry.get(), fill, object_type)
+        self.graphic_system.create_shape(
+            points_list, name, color_entry.get(), fill, object_type)
         popup_window.destroy()
         self.items_listbox.insert("end", name)
         self.logger.log(

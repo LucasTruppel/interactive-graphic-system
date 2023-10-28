@@ -5,7 +5,9 @@ from tkinter import filedialog as fd
 
 
 from gui.transform_popup import TransformPopup
-from gui.add_shape_popup import AddShapePopup
+from gui.add_2d_shape_popup import Add2DShapePopup
+from gui.add_3d_point_popup import Add3DPointPopup
+from gui.add_3d_object_popup import Add3DObjectPopup
 from gui.clipping_popup import ClippingPopup
 from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
@@ -65,6 +67,7 @@ class GraphicInterface:
 
         left_frame.pack(side=LEFT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_objects_list_frame(left_frame)
+        self.create_shape_manipulation_buttons_frame(left_frame)
         self.create_buttons_frame(left_frame)
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
@@ -100,27 +103,47 @@ class GraphicInterface:
         self.items_listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.items_listbox.yview)
 
+    def create_shape_manipulation_buttons_frame(self, parent_frame: Frame) -> None:
+        manipulation_buttons_frame = Frame(
+            parent_frame, padx=10, pady=10, relief="solid")
+        manipulation_buttons_frame.pack()
+        #  transform shape button
+        transform_button = CustomButton(
+            manipulation_buttons_frame, text="Transform Shape",
+            command=lambda: self.transform(), button_type='default_button')
+        transform_button.pack(side=LEFT)
+        #  remove shape button
+        remove_button = CustomButton(
+            manipulation_buttons_frame, text="Remove Shape", command=self.remove_shape, button_type='red_button')
+        remove_button.pack(side=LEFT)
+
     def create_buttons_frame(self, parent_frame: Frame) -> None:
         buttons_frame = Frame(parent_frame, padx=10,
                               pady=10, relief="solid")
         buttons_frame.pack()
 
-        add_shape_button = CustomButton(
+        # add 2d shape button
+        add_2d_shape_button = CustomButton(
             buttons_frame,
-            text="Add Shape",
-            command=lambda: AddShapePopup(self.main_window, self.graphic_system,
-                                          self.items_listbox, self.logger), button_type='default_button'
+            text="Add 2D Shape",
+            command=lambda: Add2DShapePopup(self.main_window, self.graphic_system,
+                                            self.items_listbox, self.logger), button_type='default_button'
         )
-        add_shape_button.pack(side=LEFT)
+        add_2d_shape_button.pack(side=LEFT)
 
-        transform_button = CustomButton(
-            buttons_frame, text="Transform Shape",
-            command=lambda: self.transform(), button_type='default_button')
-        transform_button.pack(side=LEFT)
+        # add 3d point button
+        add_3d_point_button = CustomButton(
+            buttons_frame, text="Add 3D Point",
+            command=lambda: Add3DPointPopup(self.main_window, self.graphic_system,
+                                            self.items_listbox, self.logger), button_type='default_button')
+        add_3d_point_button.pack(side=LEFT)
 
-        remove_button = CustomButton(
-            buttons_frame, text="Remove Shape", command=self.remove_shape, button_type='red_button')
-        remove_button.pack(side=LEFT)
+        # add 3d object button
+        add_3d_object_button = CustomButton(
+            buttons_frame, text="Add 3D Object",
+            command=lambda: Add3DObjectPopup(self.main_window, self.graphic_system,
+                                             self.items_listbox, self.logger), button_type='default_button')
+        add_3d_object_button.pack(side=LEFT)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
         camera_controls_frame = Frame(
@@ -157,18 +180,24 @@ class GraphicInterface:
     def create_window_rotation_frame(self, parent_frame: Frame) -> None:
         rotation_controls_frame = Frame(
             parent_frame, padx=10, pady=10)
-        rotation_controls_frame.pack()
+        rotation_controls_frame.pack(ipadx=10, ipady=10)
 
         angle_entry = EntryWithPlaceholder(
             rotation_controls_frame, "Rotation angle (degrees)")
-        rotate_left_button = CustomButton(rotation_controls_frame, text="Rotate counterclockwise",
-                                          command=lambda: self.rotate_window(False, angle_entry), button_type='fixed_size')
-        rotate_right_button = CustomButton(rotation_controls_frame, text="Rotate clockwise",
-                                           command=lambda: self.rotate_window(True, angle_entry), button_type='fixed_size')
+        rotate_left_button = CustomButton(rotation_controls_frame, text="↪",
+                                          command=lambda: self.rotate_window(False, angle_entry), button_type='default_button')
+        rotate_right_button = CustomButton(rotation_controls_frame, text="↩",
+                                           command=lambda: self.rotate_window(True, angle_entry), button_type='default_button')
+        rotate_up_button = CustomButton(rotation_controls_frame, text="⤴",
+                                        command=lambda: self.rotate_window(False, angle_entry), button_type='default_button')
+        rotate_down_button = CustomButton(rotation_controls_frame, text="⤵",
+                                          command=lambda: self.rotate_window(True, angle_entry), button_type='default_button')
 
-        angle_entry.pack(pady=(10, 5))
+        angle_entry.pack(pady=10)
         rotate_left_button.pack(side=LEFT)
-        rotate_right_button.pack(side=LEFT)
+        rotate_right_button.pack(side=RIGHT)
+        rotate_up_button.pack(side=TOP)
+        rotate_down_button.pack(side=BOTTOM)
 
     def create_clipping_controls_frame(self, parent_frame: Frame) -> None:
         clipping_controls_frame = Frame(
