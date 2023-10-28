@@ -57,7 +57,12 @@ class TransformationHandler3d:
               TransformationHandler3d.get_z_rotation_matrix(-angle_z),
               TransformationHandler3d.get_x_rotation_matrix(-angle_x),
               TransformationHandler3d.get_translation_matrix(x, y, z)]
-        self.operations.append(self.__join_operations(op))
+        matrix = self.__join_operations(op)
+        self.operations.append(matrix)
+        return matrix
+
+    def add_matrix(self, matrix: np.array):
+        self.operations.append(matrix)
 
     def remove_operation(self, pos: int) -> None:
         self.operations.pop(pos)
@@ -101,7 +106,7 @@ class TransformationHandler3d:
 
     @staticmethod
     def get_scaling_matrix(sx: float, sy: float, sz: float) -> np.array:
-        return np.array([[sx, 0, 0],
-                         [0, sy, 0],
+        return np.array([[sx, 0, 0, 0],
+                         [0, sy, 0, 0],
                          [0, 0, sz, 0],
                          [0, 0, 0, 1]])

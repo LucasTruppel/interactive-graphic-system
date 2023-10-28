@@ -23,3 +23,6 @@ class Point3d(GraphicObject3d):
 
     def get_coordinates(self) -> tuple[float, float, float]:
         return self.x, self.y, self.z
+
+    def copy(self):
+        return Point3d(self.name, self.color, self.x, self.y, self.z, self.nx, self.ny, self.nz)

@@ -7,6 +7,9 @@ from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
 from system.graphic_objects.bezier_curve import BezierCurve
 from system.graphic_objects.b_spline import BSpline
+from system.graphic_objects.point_3d import Point3d
+from system.graphic_objects.object_3d import Object3d
+from system.core.parallel_projection import ParallelProjection
 from system.core.transformation_handler import TransformationHandler
 from gui.logger import Logger
 from system.obj_file.obj_transcriber import ObjTranscriber
@@ -23,7 +26,7 @@ class GraphicSystem:
 
     def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file: list[GraphicObject] = []
-        self.window = Window(0, 0, width - 20, height - 20, logger)
+        self.window = Window(0, 0, width - 20, height - 20)
         self.viewport = Viewport(0, 0, width - 20, height - 20, viewport_canvas)
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
@@ -32,10 +35,26 @@ class GraphicSystem:
         self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
         self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
 
+        # cords = [(0, 0, 50), (0, 300, 50),
+        #          (0, 300, 50), (300, 300, 50),
+        #          (300, 300, 50), (0, 0, 50),
+        #          (0, 0, 50), (150, 150, 400),
+        #          (0, 300, 50), (150, 150, 400),
+        #          (300, 300, 50), (150, 150, 400)
+        #          ]
+        cords = [(-1000, -1000, 0), (-1000, 1000, 0),
+                 (-1000, 1000, 0), (1000, 1000, 0),
+                 (1000, 1000, 0), (1000, -1000, 0),
+                 (1000, -1000, 0), (-1000, -1000, 0)]
+        self.display_file.append(Object3d("", "#000000", cords))
+        self.draw_display_file()
+
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
         self.viewport.clear()
         for obj in self.display_file:
+            if obj.is_3d:
+                obj = ParallelProjection.project_object(obj, self.window)
             self.window.update_normalized_coordinates(obj)
             match obj.__class__.__name__:
                 case Point.__name__:
@@ -48,6 +67,10 @@ class GraphicSystem:
                     self.draw_curve(obj)
                 case BSpline.__name__:
                     self.draw_curve(obj)
+                case Point3d.__name__:
+                    self.draw_point3d(obj)
+                case Object3d.__name__:
+                    self.draw_object3d(obj)
         self.viewport.update()
 
     def draw_point(self, obj: GraphicObject) -> None:
@@ -150,7 +173,7 @@ class GraphicSystem:
         self.transformation_handler.clear_transformation()
 
     def rotate_window(self, angle: float) -> None:
-        self.window.rotate(angle)
+        self.window.rotate(angle, False)
         self.draw_display_file()
 
     def import_obj(self, file_path: str) -> list[str]:
@@ -168,3 +191,9 @@ class GraphicSystem:
         self.line_clipping_state = LineClippingState(line_clipping)
         self.polygon_clipping_state = PolygonClippingState(polygon_clipping)
         self.draw_display_file()
+
+    def draw_point3d(self, obj: Point3d):
+        pass
+
+    def draw_object3d(self, obj: Object3d):
+        self.viewport.draw_object3d(obj)

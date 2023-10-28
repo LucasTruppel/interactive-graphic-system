@@ -1,11 +1,11 @@
 import numpy as np
 
-from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.graphic_object import GraphicObject3d
 from system.graphic_objects.point_3d import Point3d
 from utils.utils import get_object_center_3d
 
 
-class Object3d(GraphicObject):
+class Object3d(GraphicObject3d):
     def __init__(self, name: str, color: str, coordinates_list: list[tuple[float, float, float]]) -> None:
         super().__init__(name, color)
         self.points = []
@@ -30,3 +30,9 @@ class Object3d(GraphicObject):
         x, y, z = self.points[0].get_coordinates()
         xc, yc, zc = get_object_center_3d(self)
         return np.array([xc - x, yc - y, zc - z])
+
+    def copy(self):
+        points_coordinates = []
+        for point in self.points:
+            points_coordinates.append((point.x, point.y, point.z))
+        return Object3d(self.name, self.color, points_coordinates)
