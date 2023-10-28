@@ -46,13 +46,13 @@ class GraphicSystem:
         #          (0, 300, 50), (150, 150, 400),
         #          (300, 300, 50), (150, 150, 400)
         #          ]
-        cords = [(-1000, -1000, 0), (-1000, 1000, 0),
-                 (-1000, 1000, 0), (1000, 1000, 0),
-                 (1000, 1000, 0), (1000, -1000, 0),
-                 (1000, -1000, 0), (-1000, -1000, 0)]
-        self.display_file.append(Object3d("", "#000000", cords))
-        self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
-        self.draw_display_file()
+        # cords = [(-1000, -1000, 0), (-1000, 1000, 0),
+        #          (-1000, 1000, 0), (1000, 1000, 0),
+        #          (1000, 1000, 0), (1000, -1000, 0),
+        #          (1000, -1000, 0), (-1000, -1000, 0)]
+        # self.display_file.append(Object3d("", "#000000", cords))
+        # self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
+        # self.draw_display_file()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -135,7 +135,7 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple[float, float]], name: str, color: str, fill: bool,
+    def create_shape(self, points_list: list[tuple], name: str, color: str, fill: bool,
                      object_type: str) -> None:
         match object_type:
             case GraphicObjectType.POINT:
@@ -151,6 +151,11 @@ class GraphicSystem:
                 self.display_file.append(BezierCurve(name, color, points_list))
             case GraphicObjectType.B_SPLINE_CURVE:
                 self.display_file.append(BSpline(name, color, points_list))
+            case GraphicObjectType.POINT_3D:
+                x, y, z = points_list[0]
+                self.display_file.append(Point3d(name, color, x, y, z))
+            case GraphicObjectType.OBJECT_3D:
+                self.display_file.append(Object3d(name, color, points_list))
 
         self.draw_display_file()
 
@@ -193,11 +198,20 @@ class GraphicSystem:
         axis_vector = np.array([x2 - x1, y2 - y1, z2 - z1])
         self.transformation_handler_3d.add_arbitrary_axis_rotation_matrix(x1, y1, z1, axis_vector, angle)
 
-    def remove_operation(self, operation_index: int) -> None:
-        self.transformation_handler.remove_operation(operation_index)
+    def remove_operation(self, operation_index: int, object_index: int) -> None:
+        obj = self.display_file[object_index]
+        if obj.is_3d:
+            self.transformation_handler_3d.remove_operation(operation_index)
+        else:
+            self.transformation_handler.remove_operation(operation_index)
+        self.draw_display_file()
 
     def transform(self, object_index: int) -> None:
-        self.transformation_handler.transform(self.display_file[object_index])
+        obj = self.display_file[object_index]
+        if obj.is_3d:
+            self.transformation_handler_3d.transform(obj)
+        else:
+            self.transformation_handler.transform(obj)
         self.draw_display_file()
 
     def clear_transformation(self, is_3d=False) -> None:
@@ -206,8 +220,8 @@ class GraphicSystem:
         else:
             self.transformation_handler.clear_transformation()
 
-    def rotate_window(self, angle: float) -> None:
-        self.window.rotate(angle, False)
+    def rotate_window(self, angle: float, is_horizontal: bool) -> None:
+        self.window.rotate(angle, is_horizontal)
         self.draw_display_file()
 
     def import_obj(self, file_path: str) -> list[str]:

@@ -75,7 +75,7 @@ class Window(Object3d):
         self.width = MathUtils.distance_between_points_3d(self.points[0], self.points[3])
         self.height = MathUtils.distance_between_points_3d(self.points[0], self.points[1])
 
-    def rotate(self, angle_degrees: float, is_horizontal=True) -> None:
+    def rotate(self, angle_degrees: float, is_horizontal) -> None:
         xc, yc, zc = get_object_center_3d(self)
         self.transformation_handler.clear_transformation()
         self.horizontal_rotation_axis = is_horizontal

@@ -30,4 +30,6 @@ class GraphicObjectType:
     POLYGON = "Polygon"
     BEZIER_CURVE = "Bezier Curve"
     B_SPLINE_CURVE = "B-Spline Curve"
+    POINT_3D = "3d Point"
+    OBJECT_3D = "3d Object"
 

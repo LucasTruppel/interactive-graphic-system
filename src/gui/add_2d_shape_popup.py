@@ -17,9 +17,11 @@ class Add2DShapePopup:
     option_3 = (GraphicObjectType.POLYGON,
                 GraphicObjectType.BEZIER_CURVE, GraphicObjectType.B_SPLINE_CURVE)
 
-    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger) -> None:
+    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, items_dimensions_list: list[bool],
+                 logger: Logger) -> None:
         self.graphic_system = graphic_system
         self.items_listbox = items_listbox
+        self.items_dimensions_list = items_dimensions_list
         self.logger = logger
         self.popup_window = Toplevel(root)
         self.popup_window.attributes("-topmost", True)
@@ -195,6 +197,7 @@ class Add2DShapePopup:
         self.graphic_system.create_shape(
             points_list, name, color_entry.get(), fill, object_type)
         popup_window.destroy()
-        self.items_listbox.insert("end", name)
+        self.items_listbox.insert("end", f"{object_type}: {name}")
+        self.items_dimensions_list.append(False)
         self.logger.log(
             f'Shape "{name}" created with points: {format_point_list(points_list)}.')

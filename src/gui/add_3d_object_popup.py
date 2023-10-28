@@ -12,14 +12,11 @@ from gui.custom_button import CustomButton
 
 class Add3DObjectPopup:
 
-    option_1 = (GraphicObjectType.POINT,)
-    option_2 = (GraphicObjectType.LINE,)
-    option_3 = (GraphicObjectType.POLYGON,
-                GraphicObjectType.BEZIER_CURVE, GraphicObjectType.B_SPLINE_CURVE)
-
-    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, logger: Logger) -> None:
+    def __init__(self, root, graphic_system: GraphicSystem, items_listbox: Listbox, items_dimensions_list: list[bool],
+                 logger: Logger) -> None:
         self.graphic_system = graphic_system
         self.items_listbox = items_listbox
+        self.items_dimensions_list = items_dimensions_list
         self.logger = logger
         self.popup_window = Toplevel(root)
         self.popup_window.attributes("-topmost", True)
@@ -61,9 +58,9 @@ class Add3DObjectPopup:
         point_a_frame.pack(fill=X, padx=10, pady=10)
         point_a_frame.configure(bg=BG_COLOR)
 
-        x_entry_a = EntryWithPlaceholder(point_a_frame, "x")
-        y_entry_a = EntryWithPlaceholder(point_a_frame, "y")
-        z_entry_a = EntryWithPlaceholder(point_a_frame, "z")
+        x_entry_a = EntryWithPlaceholder(point_a_frame, "x1")
+        y_entry_a = EntryWithPlaceholder(point_a_frame, "y1")
+        z_entry_a = EntryWithPlaceholder(point_a_frame, "z1")
 
         x_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
         y_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
@@ -74,9 +71,9 @@ class Add3DObjectPopup:
         point_b_frame.pack(fill=X, padx=10, pady=10)
         point_b_frame.configure(bg=BG_COLOR)
 
-        x_entry_b = EntryWithPlaceholder(point_b_frame, "x")
-        y_entry_b = EntryWithPlaceholder(point_b_frame, "y")
-        z_entry_b = EntryWithPlaceholder(point_b_frame, "z")
+        x_entry_b = EntryWithPlaceholder(point_b_frame, "x2")
+        y_entry_b = EntryWithPlaceholder(point_b_frame, "y2")
+        z_entry_b = EntryWithPlaceholder(point_b_frame, "z2")
 
         x_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
         y_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
@@ -84,12 +81,15 @@ class Add3DObjectPopup:
 
         points_list = []
         add_button = CustomButton(entry_frame, text="Add Line",
-                                  command=lambda: self.add_point(x_entry_a, y_entry_a, z_entry_a, points_listbox, points_list), button_type='default_button')
+                                  command=lambda: self.add_line(x_entry_a, y_entry_a, z_entry_a,
+                                                                x_entry_b, y_entry_b, z_entry_b,
+                                                                points_listbox, points_list), button_type='default_button')
         add_button.pack(side=LEFT)
 
         # CustomButton to remove selected point
         remove_button = CustomButton(
-            entry_frame, text="Remove Selected Line", command=lambda: self.remove_point(points_listbox, points_list), button_type='red_button')
+            entry_frame, text="Remove Selected Line", command=lambda: self.remove_line(points_listbox, points_list),
+            button_type='red_button')
         remove_button.pack(side=LEFT)
 
         # Name entry and pick color button frame
@@ -106,18 +106,6 @@ class Add3DObjectPopup:
                               height=20, bg=color_entry.get())
         color_canvas.pack(side=LEFT, padx=5)
 
-        # fill = BooleanVar()
-        # fill_shape_checkbox = Checkbutton(
-        #     name_and_color_frame, text="Fill Shape", variable=fill)
-        # fill_shape_checkbox.pack(side=LEFT, padx=5)
-
-        # self.type_var = StringVar()
-        # self.combobox = ttk.Combobox(
-        #     name_and_color_frame, textvariable=self.type_var, state="readonly")
-        # self.combobox["values"] = self.option_1
-        # self.combobox.current(0)
-        # self.combobox.pack(side=LEFT, padx=5)
-
         color_button = CustomButton(
             name_and_color_frame, text="Pick a color", button_type='default_button',
             command=lambda: self.pick_color(color_entry, color_canvas))
@@ -130,45 +118,33 @@ class Add3DObjectPopup:
 
         create_button = CustomButton(
             popup_buttons_frame, text="Create Shape", button_type='default_button',
-            command=lambda: self.create_shape(points_list, name_entry, color_entry, fill.get(), self.type_var.get(),
-                                              popup_window))
+            command=lambda: self.create_shape(points_list, name_entry, color_entry, popup_window))
         create_button.pack(side=LEFT)
 
         cancel_button = CustomButton(
             popup_buttons_frame, text="Cancel", command=popup_window.destroy, button_type='red_button')
         cancel_button.pack(side=LEFT)
 
-    def add_point(self, x_entry: EntryWithPlaceholder, y_entry: EntryWithPlaceholder, z_entry: EntryWithPlaceholder, points_listbox: Listbox,
-                  points_list: list[tuple[float, float]]) -> None:
-        try:
-            x = float(x_entry.get())
-            y = float(y_entry.get())
-            z = float(z_entry.get())
-            points_list.append((x, y, z))
-            points_listbox.insert("end", f"({x:g}, {y:g}, {z:g})")
-            x_entry.clear()
-            y_entry.clear()
-            z_entry.clear()
-            if len(points_list) == 0 or len(points_list) == 1:
-                self.combobox["values"] = self.option_1
-                self.combobox.current(0)
-            elif len(points_list) == 2:
-                self.combobox["values"] = self.option_2
-                self.combobox.current(0)
-            elif len(points_list) == 3:
-                self.combobox["values"] = self.option_3
-                self.combobox.current(0)
-        except ValueError:
-            if x_entry.get() == "" or y_entry.get() == "" or z_entry.get() == "":
-                messagebox.showerror(parent=self.popup_window,
-                                     title="Add Line Error",
-                                     message="Line must be specified")
-            else:
-                messagebox.showerror(parent=self.popup_window,
-                                     title="Add Line Error",
-                                     message="Invalid character")
+    def add_line(self,
+                 x_entry_a: EntryWithPlaceholder, y_entry_a: EntryWithPlaceholder, z_entry_a: EntryWithPlaceholder,
+                 x_entry_b: EntryWithPlaceholder, y_entry_b: EntryWithPlaceholder, z_entry_b: EntryWithPlaceholder,
+                 points_listbox: Listbox, points_list: list[tuple[float, float, float]]) -> None:
+        if not (x_entry_a.validate(True) and y_entry_a.validate(True) and z_entry_a.validate(True) and
+                x_entry_b.validate(True) and y_entry_b.validate(True) and z_entry_b.validate(True)):
+            return
+        xa, ya, za = float(x_entry_a.get()), float(y_entry_a.get()), float(z_entry_a.get())
+        xb, yb, zb = float(x_entry_b.get()), float(y_entry_b.get()), float(z_entry_b.get())
+        points_list.append((xa, ya, za))
+        points_list.append((xb, yb, zb))
+        points_listbox.insert("end", f"({xa:g}, {ya:g}, {za:g}) -- ({xb:g}, {yb:g}, {zb:g})")
+        x_entry_a.clear()
+        y_entry_a.clear()
+        z_entry_a.clear()
+        x_entry_b.clear()
+        y_entry_b.clear()
+        z_entry_b.clear()
 
-    def remove_point(self, points_listbox: Listbox, points_list: list[tuple[float, float]]) -> None:
+    def remove_line(self, points_listbox: Listbox, points_list: list[tuple[float, float]]) -> None:
         if len(points_listbox.curselection()) == 0:
             messagebox.showerror(parent=self.popup_window,
                                  title="Remove Line Error",
@@ -177,12 +153,7 @@ class Add3DObjectPopup:
             pos = points_listbox.curselection()[0]
             points_listbox.delete(pos)
             points_list.pop(pos)
-            if len(points_list) == 1:
-                self.combobox["values"] = self.option_1
-                self.combobox.current(0)
-            elif len(points_list) == 2:
-                self.combobox["values"] = self.option_2
-                self.combobox.current(0)
+            points_list.pop(pos)
 
     def pick_color(self, color_entry: Entry, color_canvas: Canvas) -> None:
         new_color = colorchooser.askcolor(parent=self.popup_window)[1]
@@ -196,30 +167,15 @@ class Add3DObjectPopup:
         # Update the color of the canvas square
         color_canvas.configure(bg=color)
 
-    def create_shape(self, points_list: list[tuple[float, float]], name_entry: Entry, color_entry: Entry, fill: bool,
-                     object_type: str, popup_window: Toplevel) -> None:
+    def create_shape(self, points_list: list[tuple[float, float]], name_entry: EntryWithPlaceholder, color_entry: Entry,
+                     popup_window: Toplevel) -> None:
+        if not name_entry.validate(False):
+            return
         name = name_entry.get()
-        if len(points_list) <= 0:
-            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
-                                 message="At least one point is needed")
-            return
-        if name == "" or name == "Name":
-            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
-                                 message="Shape name must be specified")
-            return
-        if (object_type == GraphicObjectType.BEZIER_CURVE
-                and not ((len(points_list) >= 4) and ((len(points_list) - 4) % 3 == 0))):
-            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
-                                 message="Bezier Curve must have a point amount (a) that follows:\n "
-                                         "a = 4 + 3n  |  n = 0, 1, 2, ...")
-            return
-        if object_type == GraphicObjectType.B_SPLINE_CURVE and len(points_list) < 4:
-            messagebox.showerror(parent=self.popup_window, title="Create Shape Error",
-                                 message="B-Spline Curve must have at least 4 points")
-            return
         self.graphic_system.create_shape(
-            points_list, name, color_entry.get(), fill, object_type)
+            points_list, name, color_entry.get(), False, GraphicObjectType.OBJECT_3D)
         popup_window.destroy()
-        self.items_listbox.insert("end", name)
+        self.items_listbox.insert("end", f"{GraphicObjectType.OBJECT_3D}: {name}")
+        self.items_dimensions_list.append(True)
         self.logger.log(
             f'Shape "{name}" created with points: {format_point_list(points_list)}.')

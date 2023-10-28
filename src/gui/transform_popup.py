@@ -231,7 +231,7 @@ class TransformPopup:
         else:
             pos = self.operation_listbox.curselection()[0]
             self.operation_listbox.delete(pos)
-            self.graphic_system.remove_operation(pos)
+            self.graphic_system.remove_operation(pos, self.object_index)
 
     def transform_shape(self, operations_amount: int, popup_window: Toplevel) -> None:
         if operations_amount > 0:

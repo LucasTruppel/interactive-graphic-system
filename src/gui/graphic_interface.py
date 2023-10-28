@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog as fd
 
-
+from gui.transform_3d_popup import Transform3dPopup
 from gui.transform_popup import TransformPopup
 from gui.add_2d_shape_popup import Add2DShapePopup
 from gui.add_3d_point_popup import Add3DPointPopup
@@ -23,6 +23,7 @@ class GraphicInterface:
         self.HEIGHT = 900
 
         self.main_window = Tk()
+        self.items_dimensions_list = []
         self.items_listbox = None
         self.console_text = None
         self.viewport_canvas = None
@@ -126,23 +127,23 @@ class GraphicInterface:
         add_2d_shape_button = CustomButton(
             buttons_frame,
             text="Add 2D Shape",
-            command=lambda: Add2DShapePopup(self.main_window, self.graphic_system,
-                                            self.items_listbox, self.logger), button_type='default_button'
+            command=lambda: Add2DShapePopup(self.main_window, self.graphic_system, self.items_listbox,
+                                            self.items_dimensions_list, self.logger), button_type='default_button'
         )
         add_2d_shape_button.pack(side=LEFT)
 
         # add 3d point button
         add_3d_point_button = CustomButton(
             buttons_frame, text="Add 3D Point",
-            command=lambda: Add3DPointPopup(self.main_window, self.graphic_system,
-                                            self.items_listbox, self.logger), button_type='default_button')
+            command=lambda: Add3DPointPopup(self.main_window, self.graphic_system, self.items_listbox,
+                                            self.items_dimensions_list, self.logger), button_type='default_button')
         add_3d_point_button.pack(side=LEFT)
 
         # add 3d object button
         add_3d_object_button = CustomButton(
             buttons_frame, text="Add 3D Object",
-            command=lambda: Add3DObjectPopup(self.main_window, self.graphic_system,
-                                             self.items_listbox, self.logger), button_type='default_button')
+            command=lambda: Add3DObjectPopup(self.main_window, self.graphic_system, self.items_listbox,
+                                             self.items_dimensions_list, self.logger), button_type='default_button')
         add_3d_object_button.pack(side=LEFT)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
@@ -185,13 +186,13 @@ class GraphicInterface:
         angle_entry = EntryWithPlaceholder(
             rotation_controls_frame, "Rotation angle (degrees)")
         rotate_left_button = CustomButton(rotation_controls_frame, text="↪",
-                                          command=lambda: self.rotate_window(False, angle_entry), button_type='default_button')
+                                          command=lambda: self.rotate_window(False, False, angle_entry), button_type='default_button')
         rotate_right_button = CustomButton(rotation_controls_frame, text="↩",
-                                           command=lambda: self.rotate_window(True, angle_entry), button_type='default_button')
+                                           command=lambda: self.rotate_window(True, False, angle_entry), button_type='default_button')
         rotate_up_button = CustomButton(rotation_controls_frame, text="⤴",
-                                        command=lambda: self.rotate_window(False, angle_entry), button_type='default_button')
+                                        command=lambda: self.rotate_window(False, True, angle_entry), button_type='default_button')
         rotate_down_button = CustomButton(rotation_controls_frame, text="⤵",
-                                          command=lambda: self.rotate_window(True, angle_entry), button_type='default_button')
+                                          command=lambda: self.rotate_window(True, True, angle_entry), button_type='default_button')
 
         angle_entry.pack(pady=10)
         rotate_left_button.pack(side=LEFT)
@@ -217,6 +218,7 @@ class GraphicInterface:
         else:
             pos = self.items_listbox.curselection()[0]
             self.items_listbox.delete(pos)
+            self.items_dimensions_list.pop(pos)
             name = self.graphic_system.remove_shape(pos)
             self.logger.log(f'Shape "{name}" deleted.')
 
@@ -245,14 +247,17 @@ class GraphicInterface:
                                  message="Select a shape")
         else:
             pos = self.items_listbox.curselection()[0]
-            TransformPopup(self.main_window, self.graphic_system, pos)
+            if self.items_dimensions_list[pos]:
+                Transform3dPopup(self.main_window, self.graphic_system, pos)
+            else:
+                TransformPopup(self.main_window, self.graphic_system, pos)
 
-    def rotate_window(self, is_clockwize: bool, angle_entry: EntryWithPlaceholder) -> None:
+    def rotate_window(self, is_clockwize: bool, is_horizontal: bool, angle_entry: EntryWithPlaceholder) -> None:
         if angle_entry.validate(True, False):
             angle = float(angle_entry.get())
         else:
             angle = 10
-        self.graphic_system.rotate_window(-angle if is_clockwize else angle)
+        self.graphic_system.rotate_window(-angle if is_clockwize else angle, is_horizontal)
 
     def import_obj(self) -> None:
         file_path = fd.askopenfilename(parent=self.main_window,
