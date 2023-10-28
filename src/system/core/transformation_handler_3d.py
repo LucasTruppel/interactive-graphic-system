@@ -44,9 +44,13 @@ class TransformationHandler3d:
               TransformationHandler3d.get_translation_matrix(xc, yc, zc)]
         self.operations.append(self.__join_operations(op))
 
-    def add_arbitrary_rotation_matrix(self, obj: Object3d, angle: float) -> np.array:
+    def add_center_axis_rotation_matrix(self, obj: Object3d, angle: float) -> np.array:
         x, y, z = obj.get_rotation_axis_point()
         rotation_vector = obj.get_rotation_vector()
+        return self.add_arbitrary_axis_rotation_matrix(x, y, z, rotation_vector, angle)
+
+    def add_arbitrary_axis_rotation_matrix(self, x: float, y: float, z: float, rotation_vector: np.array, angle: float)\
+            -> np.array:
         angle_x = MathUtils.angle_between_vector_and_xy_plane(rotation_vector)
         angle_z = MathUtils.angle_between_vector_and_y_axis(MathUtils.rotate_vector_x_axis(rotation_vector, angle_x))
 

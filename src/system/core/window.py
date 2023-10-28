@@ -79,7 +79,7 @@ class Window(Object3d):
         xc, yc, zc = get_object_center_3d(self)
         self.transformation_handler.clear_transformation()
         self.horizontal_rotation_axis = is_horizontal
-        rotation_matrix = self.transformation_handler.add_arbitrary_rotation_matrix(self, angle_degrees)
+        rotation_matrix = self.transformation_handler.add_center_axis_rotation_matrix(self, angle_degrees)
         self.transformation_handler.transform(self)
         self.update_vpn(xc, yc, zc, rotation_matrix)
 
