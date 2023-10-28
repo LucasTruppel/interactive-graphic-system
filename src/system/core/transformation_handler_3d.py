@@ -44,9 +44,13 @@ class TransformationHandler3d:
               TransformationHandler3d.get_translation_matrix(xc, yc, zc)]
         self.operations.append(self.__join_operations(op))
 
-    def add_rotation_matrix(self, obj: Object3d, angle: float) -> np.array:
+    def add_center_axis_rotation_matrix(self, obj: Object3d, angle: float) -> np.array:
         x, y, z = obj.get_rotation_axis_point()
         rotation_vector = obj.get_rotation_vector()
+        return self.add_arbitrary_axis_rotation_matrix(x, y, z, rotation_vector, angle)
+
+    def add_arbitrary_axis_rotation_matrix(self, x: float, y: float, z: float, rotation_vector: np.array, angle: float)\
+            -> np.array:
         angle_x = MathUtils.angle_between_vector_and_xy_plane(rotation_vector)
         angle_z = MathUtils.angle_between_vector_and_y_axis(MathUtils.rotate_vector_x_axis(rotation_vector, angle_x))
 
@@ -57,7 +61,21 @@ class TransformationHandler3d:
               TransformationHandler3d.get_z_rotation_matrix(-angle_z),
               TransformationHandler3d.get_x_rotation_matrix(-angle_x),
               TransformationHandler3d.get_translation_matrix(x, y, z)]
-        self.operations.append(self.__join_operations(op))
+        matrix = self.__join_operations(op)
+        self.operations.append(matrix)
+        return matrix
+
+    def add_x_rotation_matrix(self, angle: float) -> None:
+        self.operations.append(TransformationHandler3d.get_x_rotation_matrix(angle))
+
+    def add_y_rotation_matrix(self, angle: float) -> None:
+        self.operations.append(TransformationHandler3d.get_y_rotation_matrix(angle))
+
+    def add_z_rotation_matrix(self, angle: float) -> None:
+        self.operations.append(TransformationHandler3d.get_z_rotation_matrix(angle))
+
+    def add_matrix(self, matrix: np.array):
+        self.operations.append(matrix)
 
     def remove_operation(self, pos: int) -> None:
         self.operations.pop(pos)
@@ -101,7 +119,7 @@ class TransformationHandler3d:
 
     @staticmethod
     def get_scaling_matrix(sx: float, sy: float, sz: float) -> np.array:
-        return np.array([[sx, 0, 0],
-                         [0, sy, 0],
+        return np.array([[sx, 0, 0, 0],
+                         [0, sy, 0, 0],
                          [0, 0, sz, 0],
                          [0, 0, 0, 1]])

@@ -17,7 +17,7 @@ for i in range(len(points)):
     objc = Object3d("", "#000000", a)
     th = TransformationHandler3d(None)
 
-    th.add_rotation_matrix(objc, 45)
+    th.add_center_axis_rotation_matrix(objc, 45)
     th.transform(objc)
 
     point = objc.get_points()[1]

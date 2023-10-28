@@ -5,6 +5,7 @@ from system.graphic_objects.point import Point
 from system.graphic_objects.line import Line
 from system.graphic_objects.wireframe import Wireframe
 from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.object_3d import Object3d
 
 
 class Viewport:
@@ -16,7 +17,7 @@ class Viewport:
         self.viewport_canvas = viewport_canvas
         self.draw_border()
 
-    def viewport_transformation(self, point: Point) -> tuple[float, float]:
+    def viewport_transformation(self, point) -> tuple[float, float]:
         xw, yw = point.nx, point.ny
         xvp = ((xw + 1) / 2 * (self.x_max - self.x_min)) + 10
         yvp = ((1 - ((yw + 1) / 2)) * (self.y_max - self.y_min)) + 10
@@ -66,6 +67,15 @@ class Viewport:
     def draw_curve(self, curve: GraphicObject, clipping_on: bool) -> None:
         points_list = curve.get_points()
         for i in range(len(points_list) - 1):
+            point1 = points_list[i]
+            point2 = points_list[i+1]
+            line = Line.line_from_points("", point1.color, point1, point2)
+            if not clipping_on or CohenSutherland.line_clipping(line):
+                self.draw_line(line)
+
+    def draw_object3d(self, obj: Object3d, clipping_on: bool) -> None:
+        points_list = obj.get_points()
+        for i in range(0, len(points_list), 2):
             point1 = points_list[i]
             point2 = points_list[i+1]
             line = Line.line_from_points("", point1.color, point1, point2)

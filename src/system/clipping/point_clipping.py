@@ -4,7 +4,7 @@ from system.graphic_objects.point import Point
 class PointClipping:
 
     @staticmethod
-    def point_clipping(point: Point) -> bool:
+    def point_clipping(point) -> bool:
         if (-1 <= point.nx <= 1) and (-1 <= point.ny <= 1):
             return True
         return False

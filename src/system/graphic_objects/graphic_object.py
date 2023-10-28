@@ -6,6 +6,7 @@ class GraphicObject(ABC):
     def __init__(self, name: str, color: str) -> None:
         self.name = name
         self.color = color
+        self.is_3d = False
 
     @abstractmethod
     def get_points(self) -> list['Point']:
@@ -16,6 +17,7 @@ class GraphicObject3d(GraphicObject, ABC):
 
     def __init__(self, name: str, color: str) -> None:
         super().__init__(name, color)
+        self.is_3d = True
 
     @abstractmethod
     def get_points(self) -> list['Point3d']:

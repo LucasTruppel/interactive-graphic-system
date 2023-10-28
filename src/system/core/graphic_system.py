@@ -1,5 +1,7 @@
 from tkinter import Canvas
 
+import numpy as np
+
 from system.core.window import Window
 from system.core.viewport import Viewport
 from system.graphic_objects.graphic_object import GraphicObjectType
@@ -7,7 +9,11 @@ from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
 from system.graphic_objects.bezier_curve import BezierCurve
 from system.graphic_objects.b_spline import BSpline
+from system.graphic_objects.point_3d import Point3d
+from system.graphic_objects.object_3d import Object3d
+from system.core.parallel_projection import ParallelProjection
 from system.core.transformation_handler import TransformationHandler
+from system.core.transformation_handler_3d import TransformationHandler3d
 from gui.logger import Logger
 from system.obj_file.obj_transcriber import ObjTranscriber
 from system.obj_file.obj_reader import ObjReader
@@ -23,19 +29,37 @@ class GraphicSystem:
 
     def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file: list[GraphicObject] = []
-        self.window = Window(0, 0, width - 20, height - 20, logger)
+        self.window = Window(0, 0, width - 20, height - 20)
         self.viewport = Viewport(0, 0, width - 20, height - 20, viewport_canvas)
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
+        self.transformation_handler_3d = TransformationHandler3d(logger)
         self.logger = logger
         self.point_clipping_state = PointClippingState.ENABLED
         self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
         self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
 
+        # cords = [(0, 0, 50), (0, 300, 50),
+        #          (0, 300, 50), (300, 300, 50),
+        #          (300, 300, 50), (0, 0, 50),
+        #          (0, 0, 50), (150, 150, 400),
+        #          (0, 300, 50), (150, 150, 400),
+        #          (300, 300, 50), (150, 150, 400)
+        #          ]
+        cords = [(-1000, -1000, 0), (-1000, 1000, 0),
+                 (-1000, 1000, 0), (1000, 1000, 0),
+                 (1000, 1000, 0), (1000, -1000, 0),
+                 (1000, -1000, 0), (-1000, -1000, 0)]
+        self.display_file.append(Object3d("", "#000000", cords))
+        self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
+        self.draw_display_file()
+
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
         self.viewport.clear()
         for obj in self.display_file:
+            if obj.is_3d:
+                obj = ParallelProjection.project_object(obj, self.window)
             self.window.update_normalized_coordinates(obj)
             match obj.__class__.__name__:
                 case Point.__name__:
@@ -48,6 +72,10 @@ class GraphicSystem:
                     self.draw_curve(obj)
                 case BSpline.__name__:
                     self.draw_curve(obj)
+                case Point3d.__name__:
+                    self.draw_point(obj)
+                case Object3d.__name__:
+                    self.draw_object3d(obj)
         self.viewport.update()
 
     def draw_point(self, obj: GraphicObject) -> None:
@@ -78,6 +106,10 @@ class GraphicSystem:
     def draw_curve(self, obj: GraphicObject) -> None:
         clipping_on = self.line_clipping_state != LineClippingState.DISABLED
         self.viewport.draw_curve(obj, clipping_on)
+
+    def draw_object3d(self, obj: Object3d) -> None:
+        clipping_on = self.line_clipping_state != LineClippingState.DISABLED
+        self.viewport.draw_object3d(obj, clipping_on)
 
     def move_up(self) -> None:
         self.window.move_up()
@@ -128,16 +160,38 @@ class GraphicSystem:
         self.draw_display_file()
         return name
 
-    def add_translation(self, dx: float, dy: float) -> None:
-        self.transformation_handler.add_translation_matrix(dx, dy)
+    def add_translation(self, dx: float, dy: float, dz=float("inf")) -> None:
+        if dz == float("inf"):
+            self.transformation_handler.add_translation_matrix(dx, dy)
+        else:
+            self.transformation_handler_3d.add_translation_matrix(dx, dy, dz)
 
-    def add_scaling(self, object_index: int, sx: float, sy: float) -> None:
-        self.transformation_handler.add_scaling_matrix(self.display_file[object_index], sx, sy)
+    def add_scaling(self, object_index: int, sx: float, sy: float, sz=float("inf")) -> None:
+        if sz == float("inf"):
+            self.transformation_handler.add_scaling_matrix(self.display_file[object_index], sx, sy)
+        else:
+            self.transformation_handler_3d.add_scaling_matrix(self.display_file[object_index], sx, sy, sz)
 
     def add_rotation(self, x: float, y: float, angle: float, rotation_type: str, object_index: int) -> None:
         if rotation_type == "object_center":
             x, y = get_object_center(self.display_file[object_index])
         self.transformation_handler.add_rotation_matrix(x, y, angle)
+
+    def add_rotation3d(self, angle: float, rotation_type: str, object_index: int) -> None:
+        obj = self.display_file[object_index]
+        if rotation_type == "x_axis":
+            self.transformation_handler_3d.add_x_rotation_matrix(angle)
+        elif rotation_type == "y_axis":
+            self.transformation_handler_3d.add_y_rotation_matrix(angle)
+        elif rotation_type == "z_axis":
+            self.transformation_handler_3d.add_z_rotation_matrix(angle)
+        else:
+            self.transformation_handler_3d.add_center_axis_rotation_matrix(obj, angle)
+
+    def add_arbitrary_rotation3d(self, angle: float, x1: float, y1: float, z1: float,
+                                 x2: float, y2: float, z2: float):
+        axis_vector = np.array([x2 - x1, y2 - y1, z2 - z1])
+        self.transformation_handler_3d.add_arbitrary_axis_rotation_matrix(x1, y1, z1, axis_vector, angle)
 
     def remove_operation(self, operation_index: int) -> None:
         self.transformation_handler.remove_operation(operation_index)
@@ -146,11 +200,14 @@ class GraphicSystem:
         self.transformation_handler.transform(self.display_file[object_index])
         self.draw_display_file()
 
-    def clear_transformation(self) -> None:
-        self.transformation_handler.clear_transformation()
+    def clear_transformation(self, is_3d=False) -> None:
+        if is_3d:
+            self.transformation_handler_3d.clear_transformation()
+        else:
+            self.transformation_handler.clear_transformation()
 
     def rotate_window(self, angle: float) -> None:
-        self.window.rotate(angle)
+        self.window.rotate(angle, False)
         self.draw_display_file()
 
     def import_obj(self, file_path: str) -> list[str]:
