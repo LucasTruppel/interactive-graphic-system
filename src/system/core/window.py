@@ -12,11 +12,12 @@ from system.core.transformation_handler_3d import TransformationHandler3d
 
 class Window(Object3d):
 
-    def __init__(self, x_min: float, y_min: float, x_max: float, y_max: float) -> None:
+    def __init__(self, width: float, height: float) -> None:
+        x_min, y_min, x_max, y_max = -width/2, -height/2, width/2, height/2
         super().__init__("window", "#FFFFFF",
                          [(x_min, y_min, 0), (x_min, y_max, 0), (x_max, y_max, 0), (x_max, y_min, 0)])
-        self.width = x_max - x_min
-        self.height = y_max - y_min
+        self.width = width
+        self.height = height
         self.vpn = np.array([0, 0, 1])
         self.vector = np.array([0, 1])
         self.transformation_handler = TransformationHandler3d(None)
@@ -85,7 +86,12 @@ class Window(Object3d):
 
     def update_normalization_matrix(self) -> None:
         cx, cy = get_object_center(self)
-        angle_degrees = -1 * angle_between_vector_and_y_axis(self.vector)
+
+        point1, point2 = self.points[0], self.points[1]
+        v = np.array([point2.x - point1.x, point2.y - point1.y])
+        vector = MathUtils.calculate_unit_vector(v)
+
+        angle_degrees = -1 * angle_between_vector_and_y_axis(vector)
         cos = math.cos(math.radians(angle_degrees))
         sin = math.sin(math.radians(angle_degrees))
         sx = 1 / (self.width / 2)
@@ -119,7 +125,6 @@ class Window(Object3d):
             x, y, z = MathUtils.get_middle_point(self.points[3], self.points[2])
         else:
             x, y, z = MathUtils.get_middle_point(self.points[1], self.points[2])
-        x, y, z = self.points[0].get_coordinates()
         xc, yc, zc = get_object_center_3d(self)
         return np.array([x - xc, y - yc, z - zc])
 
@@ -127,11 +132,11 @@ class Window(Object3d):
         x, y, z = get_object_center_3d(self)
         self.vrp = Point3d("window_center", "#FFFFFF", x, y, z)
 
-    def update_vpn(self, xc, yc, zc, rotation_matrix):
+    def update_vpn(self, xc: float, yc: float, zc: float, rotation_matrix: np.array) -> None:
         self.transformation_handler.clear_transformation()
         vector = Object3d("vector", "#FFFFFF",
                           [(xc, yc, zc),
-                           (xc + float(self.vpn[0]), float(yc + self.vpn[1]), float(zc + self.vpn[2]))])
+                           (xc + float(self.vpn[0]), yc + float(self.vpn[1]), zc + float(self.vpn[2]))])
         self.transformation_handler.add_matrix(rotation_matrix)
         self.transformation_handler.transform(vector)
         points = vector.get_points()

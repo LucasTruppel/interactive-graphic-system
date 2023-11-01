@@ -29,7 +29,7 @@ class GraphicSystem:
 
     def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file: list[GraphicObject] = []
-        self.window = Window(0, 0, width - 20, height - 20)
+        self.window = Window(width - 20, height - 20)
         self.viewport = Viewport(0, 0, width - 20, height - 20, viewport_canvas)
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
@@ -39,20 +39,7 @@ class GraphicSystem:
         self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
         self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
 
-        # cords = [(0, 0, 50), (0, 300, 50),
-        #          (0, 300, 50), (300, 300, 50),
-        #          (300, 300, 50), (0, 0, 50),
-        #          (0, 0, 50), (150, 150, 400),
-        #          (0, 300, 50), (150, 150, 400),
-        #          (300, 300, 50), (150, 150, 400)
-        #          ]
-        # cords = [(-1000, -1000, 0), (-1000, 1000, 0),
-        #          (-1000, 1000, 0), (1000, 1000, 0),
-        #          (1000, 1000, 0), (1000, -1000, 0),
-        #          (1000, -1000, 0), (-1000, -1000, 0)]
-        # self.display_file.append(Object3d("", "#000000", cords))
-        # self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
-        # self.draw_display_file()
+        self.test()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -238,4 +225,19 @@ class GraphicSystem:
         self.point_clipping_state = PointClippingState(point_clipping)
         self.line_clipping_state = LineClippingState(line_clipping)
         self.polygon_clipping_state = PolygonClippingState(polygon_clipping)
+        self.draw_display_file()
+
+    def test(self):
+        cords0 = [(-1000, -1000, 0), (-1000, 1000, 0),
+                  (-1000, 1000, 0), (1000, 1000, 0),
+                  (1000, 1000, 0), (1000, -1000, 0),
+                  (1000, -1000, 0), (-1000, -1000, 0)]
+        cordsx = [(0, 0, 0), (1000, 0, 0)]
+        cordsy = [(0, 0, 0), (0, 1000, 0)]
+        cordsz = [(0, 0, 0), (0, 0, 1000)]
+        self.display_file.append(Object3d("", "#000000", cords0))
+        self.display_file.append(Object3d("", "#000000", cordsx))
+        self.display_file.append(Object3d("", "#000000", cordsy))
+        self.display_file.append(Object3d("", "#000000", cordsz))
+        self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
         self.draw_display_file()
