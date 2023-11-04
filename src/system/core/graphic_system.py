@@ -119,6 +119,14 @@ class GraphicSystem:
         self.window.move_right()
         self.draw_display_file()
 
+    def move_up(self) -> None:
+        self.window.move_up()
+        self.draw_display_file()
+
+    def move_down(self) -> None:
+        self.window.move_down()
+        self.draw_display_file()
+
     def zoom_in(self) -> None:
         self.window.zoom_in()
         self.draw_display_file()

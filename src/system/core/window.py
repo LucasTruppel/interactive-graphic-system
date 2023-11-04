@@ -51,12 +51,23 @@ class Window(Object3d):
         shift_vector = shift * self.__get_side_movement_vector(True)
         self.__move(shift_vector, "right")
 
+    def move_up(self):
+        shift = 0.2 * self.height
+        shift_vector = shift * self.__get_up_down_movement_vector(False)
+        self.__move(shift_vector, "up")
+
+    def move_down(self):
+        shift = 0.2 * self.height
+        shift_vector = shift * self.__get_up_down_movement_vector(True)
+        self.__move(shift_vector, "down")
+
     def __move(self, shift_vector: np.array, direction_str: str) -> None:
         self.transformation_handler.clear_transformation()
         self.transformation_handler.add_translation_matrix(float(shift_vector[0]), float(shift_vector[1]),
                                                            float(shift_vector[2]))
         self.transformation_handler.transform(self)
-        self.__log(f"[Move {direction_str} window] Shift Vector: {shift_vector}")
+        self.__log(f"[Move {direction_str} window] Shift Vector:   "
+                   f"x: {shift_vector[0]:.3f}  y: {shift_vector[1]:.3f}  z: {shift_vector[2]:.3f}")
         self.__log(f"[Move {direction_str} window] New window points: {self.__get_point_list_str()}")
         self.update_vrp(direction_str)
 
@@ -110,6 +121,14 @@ class Window(Object3d):
     def __get_side_movement_vector(self, is_right=False) -> np.array:
         point1 = self.points[3] if is_right else self.points[0]
         point2 = self.points[2] if is_right else self.points[1]
+        xlmp, ylmp, zlmp = MathUtils.get_middle_point(point1, point2)
+        xc, yc, zc = get_object_center_3d(self)
+        vector = np.array([xlmp - xc, ylmp - yc, zlmp - zc])
+        return MathUtils.calculate_unit_vector(vector)
+
+    def __get_up_down_movement_vector(self, is_down: bool) -> np.array:
+        point1 = self.points[3] if is_down else self.points[1]
+        point2 = self.points[0] if is_down else self.points[2]
         xlmp, ylmp, zlmp = MathUtils.get_middle_point(point1, point2)
         xc, yc, zc = get_object_center_3d(self)
         vector = np.array([xlmp - xc, ylmp - yc, zlmp - zc])

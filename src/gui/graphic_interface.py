@@ -148,23 +148,32 @@ class GraphicInterface:
         add_3d_object_button.pack(side=LEFT)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
-        camera_controls_frame = Frame(
-            parent_frame, padx=10, pady=10)
-        camera_controls_frame.pack(ipadx=10, ipady=10)
+        camera_control_frame = Frame(parent_frame, padx=10, pady=10)
+        camera_control_frame.pack(ipadx=10, ipady=10)
 
-        up_button = CustomButton(camera_controls_frame,
+        camera_main_control_frame = Frame(camera_control_frame, padx=30, pady=10)
+        camera_main_control_frame.pack(side=LEFT)
+        front_button = CustomButton(camera_main_control_frame,
                                  text="⬆", command=self.move_front, button_type='default_button')
-        down_button = CustomButton(camera_controls_frame,
+        back_button = CustomButton(camera_main_control_frame,
                                    text="⬇️", command=self.move_back, button_type='default_button')
-        left_button = CustomButton(camera_controls_frame,
+        left_button = CustomButton(camera_main_control_frame,
                                    text="⬅️", command=self.move_left, button_type='default_button')
-        right_button = CustomButton(camera_controls_frame,
+        right_button = CustomButton(camera_main_control_frame,
                                     text="➡️", command=self.move_right, button_type='default_button')
-
-        up_button.pack(side=TOP)
-        down_button.pack(side=BOTTOM)
+        front_button.pack(side=TOP)
+        back_button.pack(side=BOTTOM)
         left_button.pack(side=LEFT)
         right_button.pack(side=RIGHT)
+
+        camera_control_height_frame = Frame(camera_control_frame, padx=30, pady=10)
+        camera_control_height_frame.pack(side=LEFT)
+        up_button = CustomButton(camera_control_height_frame,
+                                 text="Up", command=self.move_up, button_type='default_button')
+        down_button = CustomButton(camera_control_height_frame,
+                                   text="Down", command=self.move_down, button_type='default_button')
+        up_button.pack(side=TOP)
+        down_button.pack(side=BOTTOM)
 
     def create_zoom_controls_frame(self, parent_frame: Frame) -> None:
         zoom_controls_frame = Frame(
@@ -238,6 +247,12 @@ class GraphicInterface:
 
     def move_right(self) -> None:
         self.graphic_system.move_right()
+
+    def move_up(self) -> None:
+        self.graphic_system.move_up()
+
+    def move_down(self) -> None:
+        self.graphic_system.move_down()
 
     def zoom_in(self) -> None:
         self.graphic_system.zoom_in()
