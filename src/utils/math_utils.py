@@ -9,6 +9,8 @@ class MathUtils:
     @staticmethod
     def angle_between_vector_and_xy_plane(vector1: np.array) -> float:
         vector_yz_projection = np.array([0, vector1[1], vector1[2]])
+        if np.all(vector_yz_projection == 0):
+            return 0
         y_axis = np.array([0, 1, 0])
         angle = MathUtils.angle_between_vectors(vector_yz_projection, y_axis)
         return angle if vector1[2] <= 0 else 360 - angle
@@ -16,15 +18,17 @@ class MathUtils:
     @staticmethod
     def angle_between_vector_and_yz_plane(vector1: np.array) -> float:
         vector_xz_projection = np.array([vector1[0], 0, vector1[2]])
+        if np.all(vector_xz_projection == 0):
+            return 0
         z_axis = np.array([0, 0, 1])
         angle = MathUtils.angle_between_vectors(vector_xz_projection, z_axis)
         return angle if vector1[0] <= 0 else 360 - angle
 
     @staticmethod
     def angle_between_vector_and_xz_plane(vector1: np.array) -> float:
-        if vector1[0] == 0 and vector1[1] == 0:
-            return 0
         vector_xy_projection = np.array([vector1[0], vector1[1], 0])
+        if np.all(vector_xy_projection == 0):
+            return 0
         y_axis = np.array([0, 1, 0])
         angle = MathUtils.angle_between_vectors(vector_xy_projection, y_axis)
         return angle if vector1[0] >= 0 else 360 - angle

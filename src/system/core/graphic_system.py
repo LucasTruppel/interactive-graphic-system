@@ -29,7 +29,7 @@ class GraphicSystem:
 
     def __init__(self, width: float, height: float, viewport_canvas: Canvas, logger: Logger) -> None:
         self.display_file: list[GraphicObject] = []
-        self.window = Window(width - 20, height - 20)
+        self.window = Window(width - 20, height - 20, logger)
         self.viewport = Viewport(0, 0, width - 20, height - 20, viewport_canvas)
         self.viewport_canvas = viewport_canvas
         self.transformation_handler = TransformationHandler(logger)
@@ -103,12 +103,12 @@ class GraphicSystem:
         clipping_on = self.line_clipping_state != LineClippingState.DISABLED
         self.viewport.draw_object3d(obj, clipping_on)
 
-    def move_up(self) -> None:
-        self.window.move_up()
+    def move_front(self) -> None:
+        self.window.move_front()
         self.draw_display_file()
 
-    def move_down(self) -> None:
-        self.window.move_down()
+    def move_back(self) -> None:
+        self.window.move_back()
         self.draw_display_file()
 
     def move_left(self) -> None:

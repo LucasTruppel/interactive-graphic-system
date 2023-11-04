@@ -153,9 +153,9 @@ class GraphicInterface:
         camera_controls_frame.pack(ipadx=10, ipady=10)
 
         up_button = CustomButton(camera_controls_frame,
-                                 text="⬆", command=self.move_up, button_type='default_button')
+                                 text="⬆", command=self.move_front, button_type='default_button')
         down_button = CustomButton(camera_controls_frame,
-                                   text="⬇️", command=self.move_down, button_type='default_button')
+                                   text="⬇️", command=self.move_back, button_type='default_button')
         left_button = CustomButton(camera_controls_frame,
                                    text="⬅️", command=self.move_left, button_type='default_button')
         right_button = CustomButton(camera_controls_frame,
@@ -227,11 +227,11 @@ class GraphicInterface:
             name = self.graphic_system.remove_shape(pos)
             self.logger.log(f'Shape "{name}" deleted.')
 
-    def move_up(self) -> None:
-        self.graphic_system.move_up()
+    def move_front(self) -> None:
+        self.graphic_system.move_front()
 
-    def move_down(self) -> None:
-        self.graphic_system.move_down()
+    def move_back(self) -> None:
+        self.graphic_system.move_back()
 
     def move_left(self) -> None:
         self.graphic_system.move_left()
