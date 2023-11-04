@@ -22,7 +22,7 @@ from system.clipping.point_clipping import PointClipping
 from system.clipping.cohen_sutherland import CohenSutherland
 from system.clipping.liang_barsky import LiangBarsky
 from system.clipping.sutherland_hodgman import SutherlandHodgman
-from system.clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
+from system.core.system_state import *
 
 
 class GraphicSystem:
@@ -38,7 +38,7 @@ class GraphicSystem:
         self.point_clipping_state = PointClippingState.ENABLED
         self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
         self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
-        self.projection_state = 1
+        self.projection_state = ProjectionState.PERSPECTIVE
         self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
         self.test()
@@ -48,7 +48,7 @@ class GraphicSystem:
         self.viewport.clear()
         for obj in self.display_file:
             if obj.is_3d:
-                if self.projection_state == 0:
+                if self.projection_state == ProjectionState.PARALLEL:
                     obj = Projection.parallel_projection(obj, self.window)
                 else:
                     obj = Projection.perspective_projection(obj, self.window, self.cop)
@@ -230,6 +230,10 @@ class GraphicSystem:
         self.point_clipping_state = PointClippingState(point_clipping)
         self.line_clipping_state = LineClippingState(line_clipping)
         self.polygon_clipping_state = PolygonClippingState(polygon_clipping)
+        self.draw_display_file()
+
+    def configure_projection(self, projection: int) -> None:
+        self.projection_state = ProjectionState(projection)
         self.draw_display_file()
 
     def test(self):

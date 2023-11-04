@@ -1,21 +1,22 @@
 from enum import Enum
 
 
-class ClippingState(Enum):
-    pass
-
-
-class PointClippingState(ClippingState):
+class PointClippingState(Enum):
     ENABLED = 1
     DISABLED = 2
 
 
-class LineClippingState(ClippingState):
+class LineClippingState(Enum):
     COHEN_SUTHERLAND = 1
     LIANG_BARSKY = 2
     DISABLED = 3
 
 
-class PolygonClippingState(ClippingState):
+class PolygonClippingState(Enum):
     SUTHERLAND_HODGMAN = 1
     DISABLED = 2
+
+
+class ProjectionState(Enum):
+    PARALLEL = 1
+    PERSPECTIVE = 2

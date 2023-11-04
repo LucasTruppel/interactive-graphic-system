@@ -1,6 +1,6 @@
 from tkinter import *
 
-from system.clipping.clipping_state import PointClippingState, LineClippingState, PolygonClippingState
+from system.core.system_state import PointClippingState, LineClippingState, PolygonClippingState
 from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
 from gui.custom_button import CustomButton

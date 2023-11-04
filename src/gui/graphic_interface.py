@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog as fd
 
+from gui.projection_popup import ProjectionPopup
 from gui.transform_3d_popup import Transform3dPopup
 from gui.transform_popup import TransformPopup
 from gui.add_2d_shape_popup import Add2DShapePopup
@@ -73,7 +74,7 @@ class GraphicInterface:
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
         self.create_window_rotation_frame(left_frame)
-        self.create_clipping_controls_frame(left_frame)
+        self.create_options_frame(left_frame)
 
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_viewport_frame(right_frame)
@@ -200,15 +201,19 @@ class GraphicInterface:
         rotate_up_button.pack(side=TOP)
         rotate_down_button.pack(side=BOTTOM)
 
-    def create_clipping_controls_frame(self, parent_frame: Frame) -> None:
-        clipping_controls_frame = Frame(
+    def create_options_frame(self, parent_frame: Frame) -> None:
+        options_frame = Frame(
             parent_frame, padx=10, pady=10)
-        clipping_controls_frame.pack()
+        options_frame.pack()
 
         clipping_options_button = CustomButton(
-            clipping_controls_frame, text="Clipping Options", button_type='default_button',
+            options_frame, text="Clipping Options", button_type='default_button',
             command=lambda: ClippingPopup(self.main_window, self.graphic_system))
         clipping_options_button.pack(side=LEFT)
+        projection_options_button = CustomButton(
+            options_frame, text="Projection Options", button_type='default_button',
+            command=lambda: ProjectionPopup(self.main_window, self.graphic_system))
+        projection_options_button.pack(side=LEFT)
 
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
