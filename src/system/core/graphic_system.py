@@ -11,7 +11,7 @@ from system.graphic_objects.bezier_curve import BezierCurve
 from system.graphic_objects.b_spline import BSpline
 from system.graphic_objects.point_3d import Point3d
 from system.graphic_objects.object_3d import Object3d
-from system.core.parallel_projection import ParallelProjection
+from system.core.projection import Projection
 from system.core.transformation_handler import TransformationHandler
 from system.core.transformation_handler_3d import TransformationHandler3d
 from gui.logger import Logger
@@ -38,6 +38,8 @@ class GraphicSystem:
         self.point_clipping_state = PointClippingState.ENABLED
         self.line_clipping_state = LineClippingState.COHEN_SUTHERLAND
         self.polygon_clipping_state = PolygonClippingState.SUTHERLAND_HODGMAN
+        self.projection_state = 1
+        self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
         self.test()
 
@@ -46,7 +48,10 @@ class GraphicSystem:
         self.viewport.clear()
         for obj in self.display_file:
             if obj.is_3d:
-                obj = ParallelProjection.project_object(obj, self.window)
+                if self.projection_state == 0:
+                    obj = Projection.parallel_projection(obj, self.window)
+                else:
+                    obj = Projection.perspective_projection(obj, self.window, self.cop)
             self.window.update_normalized_coordinates(obj)
             match obj.__class__.__name__:
                 case Point.__name__:
