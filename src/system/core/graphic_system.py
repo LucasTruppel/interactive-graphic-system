@@ -4,7 +4,7 @@ import numpy as np
 
 from system.core.window import Window
 from system.core.viewport import Viewport
-from system.graphic_objects.graphic_object import GraphicObjectType
+from system.graphic_objects.graphic_object import GraphicObjectType, GraphicObject3d
 from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
 from system.graphic_objects.bezier_curve import BezierCurve
@@ -41,17 +41,16 @@ class GraphicSystem:
         self.projection_state = ProjectionState.PERSPECTIVE
         self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
-        self.test()
+        # self.test()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
         self.viewport.clear()
         for obj in self.display_file:
             if obj.is_3d:
-                if self.projection_state == ProjectionState.PARALLEL:
-                    obj = Projection.parallel_projection(obj, self.window)
-                else:
-                    obj = Projection.perspective_projection(obj, self.window, self.cop)
+                obj, draw = self.project(obj)
+                if not draw:
+                    continue
             self.window.update_normalized_coordinates(obj)
             match obj.__class__.__name__:
                 case Point.__name__:
@@ -69,6 +68,18 @@ class GraphicSystem:
                 case Object3d.__name__:
                     self.draw_object3d(obj)
         self.viewport.update()
+
+    def project(self, obj: GraphicObject3d) -> tuple[GraphicObject3d, bool]:
+        if self.projection_state == ProjectionState.PARALLEL:
+            return Projection.parallel_projection(obj, self.window), True
+        else:
+            new_obj = Projection.perspective_projection(obj, self.window)
+            draw = False
+            for point in new_obj.get_points():
+                if point.z >= 0:
+                    draw = True
+                    break
+            return new_obj, draw
 
     def draw_point(self, obj: GraphicObject) -> None:
         if self.point_clipping_state == PointClippingState.ENABLED:
@@ -245,16 +256,26 @@ class GraphicSystem:
         self.draw_display_file()
 
     def test(self):
-        cords0 = [(-1000, -1000, 0), (-1000, 1000, 0),
-                  (-1000, 1000, 0), (1000, 1000, 0),
-                  (1000, 1000, 0), (1000, -1000, 0),
-                  (1000, -1000, 0), (-1000, -1000, 0)]
-        cordsx = [(0, 0, 0), (1000, 0, 0)]
-        cordsy = [(0, 0, 0), (0, 1000, 0)]
-        cordsz = [(0, 0, 0), (0, 0, 1000)]
-        self.display_file.append(Object3d("", "#000000", cords0))
-        self.display_file.append(Object3d("", "#000000", cordsx))
-        self.display_file.append(Object3d("", "#000000", cordsy))
-        self.display_file.append(Object3d("", "#000000", cordsz))
+        cube_coords = [
+            (0, 0, 0), (0, 100, 0),
+            (0, 100, 0), (100, 100, 0),
+            (100, 100, 0), (100, 0, 0),
+            (100, 0, 0), (0, 0, 0),
+            (0, 0, 0), (0, 0, 100),
+            (100, 0, 0), (100, 0, 100),
+            (100, 100, 0), (100, 100, 100),
+            (0, 100, 0), (0, 100, 100),
+            (0, 0, 100), (0, 100, 100),
+            (0, 100, 100), (100, 100, 100),
+            (100, 100, 100), (100, 0, 100),
+            (100, 0, 100), (0, 0, 100),
+        ]
+        x_axis_cords = [(0, 0, 0), (1000, 0, 0)]
+        y_axis_cords = [(0, 0, 0), (0, 1000, 0)]
+        z_axis_cords = [(0, 0, 0), (0, 0, 1000)]
+        self.display_file.append(Object3d("", "#000000", cube_coords))
+        self.display_file.append(Object3d("", "#000000", x_axis_cords))
+        self.display_file.append(Object3d("", "#000000", y_axis_cords))
+        self.display_file.append(Object3d("", "#000000", z_axis_cords))
         self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
         self.draw_display_file()

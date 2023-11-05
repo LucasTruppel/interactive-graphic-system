@@ -74,7 +74,7 @@ class TransformationHandler3d:
     def add_z_rotation_matrix(self, angle: float) -> None:
         self.operations.append(TransformationHandler3d.get_z_rotation_matrix(angle))
 
-    def add_matrix(self, matrix: np.array):
+    def add_matrix(self, matrix: np.array) -> None:
         self.operations.append(matrix)
 
     def remove_operation(self, pos: int) -> None:
