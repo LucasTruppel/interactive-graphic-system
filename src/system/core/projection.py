@@ -37,16 +37,15 @@ class Projection:
         angle_x = MathUtils.angle_between_vector_and_z_axis(
             MathUtils.rotate_vector_around_z_axis(rotation_vector, angle_z))
         d = MathUtils.distance_between_points_3d(cop, window.vrp)
-        M = np.array([[1, 0, 0, 0],
-                      [0, 1, 0, 0],
-                      [0, 0, 1, 0],
-                      [0, 0, 1 / d, 0]])
 
         transformation_handler.add_translation_matrix(-cop.x, -cop.y, -cop.z)
         transformation_handler.add_matrix(TransformationHandler3d.get_z_rotation_matrix(angle_z))
         transformation_handler.add_matrix(TransformationHandler3d.get_x_rotation_matrix(angle_x))
-        transformation_handler.add_matrix(M)
         transformation_handler.transform(new_obj)
+
+        for point in new_obj.get_points():
+            point.x = (d * point.x) / point.z
+            point.y = (d * point.y) / point.z
 
         return new_obj
 

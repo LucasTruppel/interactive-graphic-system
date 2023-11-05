@@ -74,10 +74,10 @@ class GraphicSystem:
             return Projection.parallel_projection(obj, self.window), True
         else:
             new_obj = Projection.perspective_projection(obj, self.window)
-            draw = False
+            draw = True
             for point in new_obj.get_points():
-                if point.z >= 0:
-                    draw = True
+                if point.z < 0:
+                    draw = False
                     break
             return new_obj, draw
 

@@ -96,12 +96,9 @@ class Window(Object3d):
 
     def update_normalization_matrix(self) -> None:
         cx, cy = get_object_center(self)
+        v = [0, 1]
 
-        point1, point2 = self.points[0], self.points[1]
-        v = np.array([point2.x - point1.x, point2.y - point1.y])
-        vector = MathUtils.calculate_unit_vector(v)
-
-        angle_degrees = -1 * angle_between_vector_and_y_axis(vector)
+        angle_degrees = -1 * angle_between_vector_and_y_axis(v)
         cos = math.cos(math.radians(angle_degrees))
         sin = math.sin(math.radians(angle_degrees))
         sx = 1 / (self.width / 2)
