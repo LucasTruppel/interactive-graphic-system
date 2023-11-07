@@ -42,7 +42,7 @@ class GraphicSystem:
         self.projection_state = ProjectionState.PERSPECTIVE
         self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
-        self.test()
+        # self.test()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -69,7 +69,7 @@ class GraphicSystem:
                 case Object3d.__name__:
                     self.draw_object3d(obj)
                 case BezierCurve3d.__name__:
-                    self.draw_object3d(obj)
+                    self.draw_curve3d(obj)
         self.viewport.update()
 
     def project(self, obj: GraphicObject3d) -> tuple[GraphicObject3d, bool]:
@@ -116,6 +116,10 @@ class GraphicSystem:
     def draw_object3d(self, obj: Object3d) -> None:
         clipping_on = self.line_clipping_state != LineClippingState.DISABLED
         self.viewport.draw_object3d(obj, clipping_on)
+
+    def draw_curve3d(self, obj: Object3d) -> None:
+        clipping_on = self.line_clipping_state != LineClippingState.DISABLED
+        self.viewport.draw_curve3d(obj, clipping_on)
 
     def move_front(self) -> None:
         self.window.move_front()
@@ -259,10 +263,10 @@ class GraphicSystem:
         self.draw_display_file()
 
     def test(self):
-        curve_coord = [(0, 0, 0), (0, 30, 40), (0, 60, 30), (0, 100, 0),
-                       (30, 25, 20), (20, 60, 50), (30, 80, 50), (40, 0, 20),
-                       (60, 30, 20), (80, 60, 50), (70, 100, 45), (60, 0, 25),
-                       (100, 0, 0), (110, 30, 40), (110, 60, 30), (100, 90, 0)]
+        curve_coord = [(0, 0, 0), (33, 50, 0), (66, 50, 0), (100, 0, 0),
+                       (0, 0, 33), (33, 50, 33), (66, 50, 33), (100, 0, 33),
+                       (0, 0, 66), (33, 50, 66), (66, 50, 66), (100, 0, 66),
+                       (0, 0, 100), (33, 50, 100), (66, 50, 100), (100, 0, 100)]
         cube_coords = [
             (0, 0, 0), (0, 100, 0),
             (0, 100, 0), (100, 100, 0),
@@ -280,7 +284,7 @@ class GraphicSystem:
         x_axis_cords = [(0, 0, 0), (1000, 0, 0)]
         y_axis_cords = [(0, 0, 0), (0, 1000, 0)]
         z_axis_cords = [(0, 0, 0), (0, 0, 1000)]
-        # self.display_file.append(Object3d("", "#000000", cube_coords))
+        self.display_file.append(Object3d("", "#000000", cube_coords))
         self.display_file.append(BezierCurve3d("", "#000000", curve_coord))
         self.display_file.append(Object3d("", "#000000", x_axis_cords))
         self.display_file.append(Object3d("", "#000000", y_axis_cords))

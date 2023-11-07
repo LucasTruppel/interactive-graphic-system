@@ -1,6 +1,7 @@
 from tkinter import Canvas
 
 from system.clipping.cohen_sutherland import CohenSutherland
+from system.graphic_objects.bezier_curve_3d import BezierCurve3d
 from system.graphic_objects.point import Point
 from system.graphic_objects.line import Line
 from system.graphic_objects.wireframe import Wireframe
@@ -81,3 +82,20 @@ class Viewport:
             line = Line.line_from_points("", point1.color, point1, point2)
             if not clipping_on or CohenSutherland.line_clipping(line):
                 self.draw_line(line)
+
+    def draw_curve3d(self, obj: BezierCurve3d, clipping_on: bool) -> None:
+        points_list = obj.get_points()
+        for i in range(obj.n):
+            for j in range(1, obj.n):
+                point1 = points_list[obj.n * i + (j - 1)]
+                point2 = points_list[obj.n * i + j]
+                line = Line.line_from_points("", point1.color, point1, point2)
+                if not clipping_on or CohenSutherland.line_clipping(line):
+                    self.draw_line(line)
+        for j in range(obj.n):
+            for i in range(1, obj.n):
+                point1 = points_list[obj.n * (i - 1) + j]
+                point2 = points_list[obj.n * i + j]
+                line = Line.line_from_points("", point1.color, point1, point2)
+                if not clipping_on or CohenSutherland.line_clipping(line):
+                    self.draw_line(line)
