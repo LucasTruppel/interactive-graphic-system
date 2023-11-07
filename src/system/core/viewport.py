@@ -4,7 +4,7 @@ from system.clipping.cohen_sutherland import CohenSutherland
 from system.graphic_objects.point import Point
 from system.graphic_objects.line import Line
 from system.graphic_objects.wireframe import Wireframe
-from system.graphic_objects.graphic_object import GraphicObject
+from system.graphic_objects.graphic_object import GraphicObject, GraphicObject3d
 from system.graphic_objects.object_3d import Object3d
 
 
@@ -73,7 +73,7 @@ class Viewport:
             if not clipping_on or CohenSutherland.line_clipping(line):
                 self.draw_line(line)
 
-    def draw_object3d(self, obj: Object3d, clipping_on: bool) -> None:
+    def draw_object3d(self, obj: GraphicObject3d, clipping_on: bool) -> None:
         points_list = obj.get_points()
         for i in range(0, len(points_list), 2):
             point1 = points_list[i]

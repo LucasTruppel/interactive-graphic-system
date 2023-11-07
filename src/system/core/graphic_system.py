@@ -4,6 +4,7 @@ import numpy as np
 
 from system.core.window import Window
 from system.core.viewport import Viewport
+from system.graphic_objects.bezier_curve_3d import BezierCurve3d
 from system.graphic_objects.graphic_object import GraphicObjectType, GraphicObject3d
 from system.graphic_objects.line import *
 from system.graphic_objects.wireframe import Wireframe
@@ -41,7 +42,7 @@ class GraphicSystem:
         self.projection_state = ProjectionState.PERSPECTIVE
         self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
-        # self.test()
+        self.test()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -66,6 +67,8 @@ class GraphicSystem:
                 case Point3d.__name__:
                     self.draw_point(obj)
                 case Object3d.__name__:
+                    self.draw_object3d(obj)
+                case BezierCurve3d.__name__:
                     self.draw_object3d(obj)
         self.viewport.update()
 
@@ -256,6 +259,10 @@ class GraphicSystem:
         self.draw_display_file()
 
     def test(self):
+        curve_coord = [(0, 0, 0), (0, 30, 40), (0, 60, 30), (0, 100, 0),
+                       (30, 25, 20), (20, 60, 50), (30, 80, 50), (40, 0, 20),
+                       (60, 30, 20), (80, 60, 50), (70, 100, 45), (60, 0, 25),
+                       (100, 0, 0), (110, 30, 40), (110, 60, 30), (100, 90, 0)]
         cube_coords = [
             (0, 0, 0), (0, 100, 0),
             (0, 100, 0), (100, 100, 0),
@@ -273,7 +280,8 @@ class GraphicSystem:
         x_axis_cords = [(0, 0, 0), (1000, 0, 0)]
         y_axis_cords = [(0, 0, 0), (0, 1000, 0)]
         z_axis_cords = [(0, 0, 0), (0, 0, 1000)]
-        self.display_file.append(Object3d("", "#000000", cube_coords))
+        # self.display_file.append(Object3d("", "#000000", cube_coords))
+        self.display_file.append(BezierCurve3d("", "#000000", curve_coord))
         self.display_file.append(Object3d("", "#000000", x_axis_cords))
         self.display_file.append(Object3d("", "#000000", y_axis_cords))
         self.display_file.append(Object3d("", "#000000", z_axis_cords))
