@@ -52,12 +52,19 @@ class GraphicInterface:
     def create_menubar(self) -> None:
         menubar = Menu(self.main_window)
         self.main_window.config(menu=menubar)
-        filemenu = Menu(menubar, tearoff=False)
-        filemenu.add_command(label="Import obj",
+        file_menu = Menu(menubar, tearoff=False)
+        file_menu.add_command(label="Import obj",
                              command=lambda: self.import_obj())
-        filemenu.add_command(label="Export obj",
+        file_menu.add_command(label="Export obj",
                              command=lambda: self.export_obj())
-        menubar.add_cascade(label="File", menu=filemenu)
+        menubar.add_cascade(label="File", menu=file_menu)
+
+        options_menu = Menu(menubar, tearoff=False)
+        options_menu.add_command(label="Clipping Options",
+                                 command=lambda: ClippingPopup(self.main_window, self.graphic_system))
+        options_menu.add_command(label="Projection Options",
+                                 command=lambda: ProjectionPopup(self.main_window, self.graphic_system))
+        menubar.add_cascade(label="Options", menu=options_menu)
 
     def create_interface(self) -> None:
         left_frame = Frame(self.main_window)
@@ -75,7 +82,6 @@ class GraphicInterface:
         self.create_camera_controls_frame(left_frame)
         self.create_zoom_controls_frame(left_frame)
         self.create_window_rotation_frame(left_frame)
-        self.create_options_frame(left_frame)
 
         right_frame.pack(side=RIGHT, padx=10, pady=10, fill=BOTH, expand=True)
         self.create_viewport_frame(right_frame)
@@ -226,20 +232,6 @@ class GraphicInterface:
         rotate_right_button.pack(side=RIGHT)
         rotate_up_button.pack(side=TOP)
         rotate_down_button.pack(side=BOTTOM)
-
-    def create_options_frame(self, parent_frame: Frame) -> None:
-        options_frame = Frame(
-            parent_frame, padx=10, pady=10)
-        options_frame.pack()
-
-        clipping_options_button = CustomButton(
-            options_frame, text="Clipping Options", button_type='default_button',
-            command=lambda: ClippingPopup(self.main_window, self.graphic_system))
-        clipping_options_button.pack(side=LEFT)
-        projection_options_button = CustomButton(
-            options_frame, text="Projection Options", button_type='default_button',
-            command=lambda: ProjectionPopup(self.main_window, self.graphic_system))
-        projection_options_button.pack(side=LEFT)
 
     def remove_shape(self) -> None:
         if len(self.items_listbox.curselection()) == 0:
