@@ -42,10 +42,20 @@ class BezierCurve3d(GraphicObject3d):
             for s in np.arange(0, 1 + pace, pace):
                 self.n += 1
                 S = np.array([s ** 3, s ** 2, s, 1])
+                SMb = np.dot(S, self.Mb)
                 for t in np.arange(0, 1 + pace, pace):
                     Tt = np.array([[t ** 3], [t ** 2], [t], [1]])
-                    SMb = np.dot(S, self.Mb)
                     MtbTt = np.dot(self.Mbt, Tt)
+                    x = float(np.dot(np.dot(SMb, Gbx), MtbTt))
+                    y = float(np.dot(np.dot(SMb, Gby), MtbTt))
+                    z = float(np.dot(np.dot(SMb, Gbz), MtbTt))
+                    self.points.append(Point3d(f"", self.color, x, y, z))
+            for t in np.arange(0, 1 + pace, pace):
+                Tt = np.array([[t ** 3], [t ** 2], [t], [1]])
+                MtbTt = np.dot(self.Mbt, Tt)
+                for s in np.arange(0, 1 + pace, pace):
+                    S = np.array([s ** 3, s ** 2, s, 1])
+                    SMb = np.dot(S, self.Mb)
                     x = float(np.dot(np.dot(SMb, Gbx), MtbTt))
                     y = float(np.dot(np.dot(SMb, Gby), MtbTt))
                     z = float(np.dot(np.dot(SMb, Gbz), MtbTt))
