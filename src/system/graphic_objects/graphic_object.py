@@ -32,4 +32,4 @@ class GraphicObjectType:
     B_SPLINE_CURVE = "B-Spline Curve"
     POINT_3D = "3d Point"
     OBJECT_3D = "3d Object"
-
+    CURVE_3D = "3d Curve"

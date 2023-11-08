@@ -9,6 +9,7 @@ from gui.transform_popup import TransformPopup
 from gui.add_2d_shape_popup import Add2DShapePopup
 from gui.add_3d_point_popup import Add3DPointPopup
 from gui.add_3d_object_popup import Add3DObjectPopup
+from gui.add_3d_curve_popup import Add3DCurvePopup
 from gui.clipping_popup import ClippingPopup
 from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
@@ -20,7 +21,7 @@ from gui.entry_with_placeholder import EntryWithPlaceholder
 class GraphicInterface:
 
     def __init__(self) -> None:
-        self.WIDTH = 1600
+        self.WIDTH = 1700
         self.HEIGHT = 900
 
         self.main_window = Tk()
@@ -44,7 +45,7 @@ class GraphicInterface:
 
     def configure_main_window(self) -> None:
         self.main_window.title("Interactive Graphic System")
-        self.main_window.geometry(f"{self.WIDTH}x{self.HEIGHT}")
+        self.main_window.geometry(f"{self.WIDTH}x{self.HEIGHT}+0+0")
         self.main_window.resizable(False, False)
         self.main_window.configure(bg=BG_COLOR)
 
@@ -124,9 +125,16 @@ class GraphicInterface:
                               pady=10, relief="solid")
         buttons_frame.pack()
 
+        # upper button frame
+        upper_buttons_frame = Frame(buttons_frame)
+        upper_buttons_frame.pack()
+        # lower button frame
+        lower_buttons_frame = Frame(buttons_frame)
+        lower_buttons_frame.pack()
+        
         # add 2d shape button
         add_2d_shape_button = CustomButton(
-            buttons_frame,
+            upper_buttons_frame,
             text="Add 2D Shape",
             command=lambda: Add2DShapePopup(self.main_window, self.graphic_system, self.items_listbox,
                                             self.items_dimensions_list, self.logger), button_type='default_button'
@@ -135,26 +143,34 @@ class GraphicInterface:
 
         # add 3d point button
         add_3d_point_button = CustomButton(
-            buttons_frame, text="Add 3D Point",
+            upper_buttons_frame, text="Add 3D Point",
             command=lambda: Add3DPointPopup(self.main_window, self.graphic_system, self.items_listbox,
                                             self.items_dimensions_list, self.logger), button_type='default_button')
         add_3d_point_button.pack(side=LEFT)
 
         # add 3d object button
         add_3d_object_button = CustomButton(
-            buttons_frame, text="Add 3D Object",
+            lower_buttons_frame, text="Add 3D Object",
             command=lambda: Add3DObjectPopup(self.main_window, self.graphic_system, self.items_listbox,
                                              self.items_dimensions_list, self.logger), button_type='default_button')
         add_3d_object_button.pack(side=LEFT)
+
+        # add 3d curve button
+        add_3d_curve_button = CustomButton(
+            lower_buttons_frame, text="Add 3D Curve",
+            command=lambda: Add3DCurvePopup(self.main_window, self.graphic_system, self.items_listbox,
+                                            self.items_dimensions_list, self.logger), button_type='default_button')
+        add_3d_curve_button.pack(side=LEFT)
 
     def create_camera_controls_frame(self, parent_frame: Frame) -> None:
         camera_control_frame = Frame(parent_frame, padx=10, pady=10)
         camera_control_frame.pack(ipadx=10, ipady=10)
 
-        camera_main_control_frame = Frame(camera_control_frame, padx=30, pady=10)
+        camera_main_control_frame = Frame(
+            camera_control_frame, padx=30, pady=10)
         camera_main_control_frame.pack(side=LEFT)
         front_button = CustomButton(camera_main_control_frame,
-                                 text="⬆", command=self.move_front, button_type='default_button')
+                                    text="⬆", command=self.move_front, button_type='default_button')
         back_button = CustomButton(camera_main_control_frame,
                                    text="⬇️", command=self.move_back, button_type='default_button')
         left_button = CustomButton(camera_main_control_frame,
@@ -166,7 +182,8 @@ class GraphicInterface:
         left_button.pack(side=LEFT)
         right_button.pack(side=RIGHT)
 
-        camera_control_height_frame = Frame(camera_control_frame, padx=30, pady=10)
+        camera_control_height_frame = Frame(
+            camera_control_frame, padx=30, pady=10)
         camera_control_height_frame.pack(side=LEFT)
         up_button = CustomButton(camera_control_height_frame,
                                  text="Up", command=self.move_up, button_type='default_button')
@@ -277,7 +294,8 @@ class GraphicInterface:
             angle = float(angle_entry.get())
         else:
             angle = 10
-        self.graphic_system.rotate_window(-angle if is_clockwize else angle, is_horizontal)
+        self.graphic_system.rotate_window(
+            -angle if is_clockwize else angle, is_horizontal)
 
     def import_obj(self) -> None:
         file_path = fd.askopenfilename(parent=self.main_window,
