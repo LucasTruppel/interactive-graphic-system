@@ -20,8 +20,6 @@ class Add3DCurvePopup:
         self.logger = logger
         self.popup_window = Toplevel(root)
         self.popup_window.attributes("-topmost", True)
-        self.type_var = None
-        self.combobox = None
         self.init_popup(self.popup_window)
 
     def init_popup(self, popup_window) -> None:
@@ -34,7 +32,6 @@ class Add3DCurvePopup:
         popup_window.configure(bg=BG_COLOR)
 
     def create_popup(self, popup_window) -> None:
-        # Frame for the list of points
         points_frame = Frame(popup_window)
         points_frame.pack(fill=BOTH, padx=10, pady=10)
 
@@ -45,64 +42,26 @@ class Add3DCurvePopup:
         points_listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=points_listbox.yview)
 
-        # Frame for entering coordinates and adding points
-        entry_frame = Frame(popup_window)
-        entry_frame.pack(fill=X, padx=10, pady=10)
-        entry_frame.configure(bg=BG_COLOR)
+        matrix_frame = Frame(popup_window, height=200, width=200)
+        matrix_frame.pack(fill=BOTH, padx=10, pady=10, side=TOP, expand=True)
 
-        # Frame for entering the string that will contain all 16 points of the 4x4 matrix
-        matrix_frame = Frame(entry_frame, height=50, width=200)
-        matrix_frame.pack(fill=X, padx=10, pady=10, side=LEFT)
+        matrix_entry = EntryWithPlaceholder(matrix_frame, "Matrix")
+        matrix_entry.pack(side=TOP, padx=10, expand=True, fill=BOTH)
 
-        # entry for the string that will contain all 16 points of the 4x4 matrix
-        matrix_entry = EntryWithPlaceholder(
-            matrix_frame, "Matrix")
-        matrix_entry.pack(side=LEFT, padx=10, expand=True, fill=BOTH)
-
-        # # point a, upper entries
-        # point_a_frame = Frame(line_segment_frame)
-        # point_a_frame.pack(fill=X, padx=10, pady=10)
-        # point_a_frame.configure(bg=BG_COLOR)
-
-        # x_entry_a = EntryWithPlaceholder(point_a_frame, "x1")
-        # y_entry_a = EntryWithPlaceholder(point_a_frame, "y1")
-        # z_entry_a = EntryWithPlaceholder(point_a_frame, "z1")
-
-        # x_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
-        # y_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
-        # z_entry_a.pack(side=LEFT, padx=(0, 10), expand=True)
-
-        # # point b, lower entries
-        # point_b_frame = Frame(line_segment_frame)
-        # point_b_frame.pack(fill=X, padx=10, pady=10)
-        # point_b_frame.configure(bg=BG_COLOR)
-
-        # x_entry_b = EntryWithPlaceholder(point_b_frame, "x2")
-        # y_entry_b = EntryWithPlaceholder(point_b_frame, "y2")
-        # z_entry_b = EntryWithPlaceholder(point_b_frame, "z2")
-
-        # x_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
-        # y_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
-        # z_entry_b.pack(side=LEFT, padx=(0, 10), expand=True)
+        matrix_buttons_frame = Frame(popup_window)
+        matrix_buttons_frame.pack(fill=X, padx=10, pady=10)
+        matrix_buttons_frame.configure(bg=BG_COLOR)
 
         points_list = []
-        add_button = CustomButton(entry_frame, text="Add Curve",
+        add_button = CustomButton(matrix_buttons_frame, text="Add Curve",
                                   command=lambda: self.add_curve(matrix_entry, points_listbox, points_list), button_type='default_button')
         add_button.pack(side=LEFT)
 
-        # TODO: add edit button and window 
-        # # CustomButton to edit the selected curve
-        # edit_button = CustomButton(entry_frame, text="Edit Curve", command=lambda: self.edit_curve(points_listbox, points_list),
-        #                            button_type='default_button')
-        # edit_button.pack(side=LEFT)
-
-        # CustomButton to remove selected curve
         remove_button = CustomButton(
-            entry_frame, text="Remove Curve", command=lambda: self.remove_curve(points_listbox, points_list),
+            matrix_buttons_frame, text="Remove Curve", command=lambda: self.remove_curve(points_listbox, points_list),
             button_type='red_button')
         remove_button.pack(side=LEFT)
 
-        # Name entry and pick color button frame
         name_and_color_frame = Frame(popup_window)
         name_and_color_frame.pack(padx=10, pady=(0, 10), fill=X)
         name_and_color_frame.configure(bg=BG_COLOR)
@@ -121,7 +80,6 @@ class Add3DCurvePopup:
             command=lambda: self.pick_color(color_entry, color_canvas))
         color_button.pack(side=LEFT)
 
-        # Add shape window confirm and cancel buttons frame
         popup_buttons_frame = Frame(popup_window)
         popup_buttons_frame.pack(padx=5, pady=5, fill=X, side=RIGHT)
         popup_buttons_frame.configure(bg=BG_COLOR)
@@ -139,23 +97,7 @@ class Add3DCurvePopup:
                   matrix_entry: EntryWithPlaceholder, points_listbox: Listbox, points_list: list[tuple[float, float, float]]) -> None:
         if not (matrix_entry.validate(True)):
             return
-        # xa, ya, za = float(x_entry_a.get()), float(
-        #     y_entry_a.get()), float(z_entry_a.get())
-        # xb, yb, zb = float(x_entry_b.get()), float(
-        #     y_entry_b.get()), float(z_entry_b.get())
-        # ----------------------------------
         # TODO: extract points from matrix
-        # points_list.append((xa, ya, za))
-        # points_list.append((xb, yb, zb))
-        # points_listbox.insert(
-        #     "end", f"({xa:g}, {ya:g}, {za:g}) -- ({xb:g}, {yb:g}, {zb:g})")
-        # ----------------------------------
-        # x_entry_a.clear()
-        # y_entry_a.clear()
-        # z_entry_a.clear()
-        # x_entry_b.clear()
-        # y_entry_b.clear()
-        # z_entry_b.clear()
         matrix_entry.clear()
 
     def remove_curve(self, points_listbox: Listbox, points_list: list[tuple[float, float]]) -> None:

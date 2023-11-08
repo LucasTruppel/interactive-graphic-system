@@ -5,8 +5,8 @@ from gui.style import BG_COLOR, FG_COLOR
 
 
 class EntryWithPlaceholder(tk.Entry):
-    def __init__(self, root, placeholder: str) -> None:
-        super().__init__(root)
+    def __init__(self, root, placeholder: str, **kwargs) -> None:
+        super().__init__(root, **kwargs)
 
         self.root = root
         self.placeholder = placeholder
