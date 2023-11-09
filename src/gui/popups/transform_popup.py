@@ -1,10 +1,10 @@
 from tkinter import *
 from tkinter import messagebox
 
-from gui.entry_with_placeholder import EntryWithPlaceholder
+from gui.widgets.entry_with_placeholder import EntryWithPlaceholder
 from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR, FG_COLOR
-from gui.custom_button import CustomButton
+from gui.widgets.custom_button import CustomButton
 
 
 class TransformPopup:

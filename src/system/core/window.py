@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-from gui.logger import Logger
+from gui.widgets.logger import Logger
 from system.graphic_objects.graphic_object import GraphicObject
 from system.graphic_objects.object_3d import Object3d
 from system.graphic_objects.point_3d import Point3d

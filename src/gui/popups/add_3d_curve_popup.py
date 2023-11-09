@@ -2,14 +2,14 @@ from tkinter import *
 from tkinter import messagebox, colorchooser
 from tkinter import ttk
 
-from gui.TextWithPlaceholder import TextWithPlaceholder
-from gui.entry_with_placeholder import EntryWithPlaceholder
+from gui.widgets.text_with_placeholder import TextWithPlaceholder
+from gui.widgets.entry_with_placeholder import EntryWithPlaceholder
 from system.core.graphic_system import GraphicSystem
 from system.graphic_objects.graphic_object import GraphicObjectType
 from gui.style import BG_COLOR
-from gui.logger import Logger
+from gui.widgets.logger import Logger
 from utils.utils import format_point_list
-from gui.custom_button import CustomButton
+from gui.widgets.custom_button import CustomButton
 
 
 class Add3DCurvePopup:

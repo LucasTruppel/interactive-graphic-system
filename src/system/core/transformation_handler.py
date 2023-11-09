@@ -2,7 +2,7 @@ import math
 import numpy as np
 from system.graphic_objects.graphic_object import GraphicObject
 from system.graphic_objects.point import Point
-from gui.logger import Logger
+from gui.widgets.logger import Logger
 from utils.utils import format_point_list, get_object_center
 
 

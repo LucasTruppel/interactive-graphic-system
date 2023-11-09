@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from system.graphic_objects.object_3d import Object3d
-from gui.logger import Logger
+from gui.widgets.logger import Logger
 from utils.utils import get_object_center_3d
 from utils.math_utils import MathUtils
 

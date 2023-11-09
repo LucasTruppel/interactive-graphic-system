@@ -3,19 +3,19 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import filedialog as fd
 
-from gui.projection_popup import ProjectionPopup
-from gui.transform_3d_popup import Transform3dPopup
-from gui.transform_popup import TransformPopup
-from gui.add_2d_shape_popup import Add2DShapePopup
-from gui.add_3d_point_popup import Add3DPointPopup
-from gui.add_3d_object_popup import Add3DObjectPopup
-from gui.add_3d_curve_popup import Add3DCurvePopup
-from gui.clipping_popup import ClippingPopup
+from gui.popups.projection_popup import ProjectionPopup
+from gui.popups.transform_3d_popup import Transform3dPopup
+from gui.popups.transform_popup import TransformPopup
+from gui.popups.add_2d_shape_popup import Add2DShapePopup
+from gui.popups.add_3d_point_popup import Add3DPointPopup
+from gui.popups.add_3d_object_popup import Add3DObjectPopup
+from gui.popups.add_3d_curve_popup import Add3DCurvePopup
+from gui.popups.clipping_popup import ClippingPopup
 from system.core.graphic_system import GraphicSystem
 from gui.style import BG_COLOR
-from gui.logger import Logger
-from gui.custom_button import CustomButton
-from gui.entry_with_placeholder import EntryWithPlaceholder
+from gui.widgets.logger import Logger
+from gui.widgets.custom_button import CustomButton
+from gui.widgets.entry_with_placeholder import EntryWithPlaceholder
 
 
 class GraphicInterface:

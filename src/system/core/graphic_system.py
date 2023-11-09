@@ -15,7 +15,7 @@ from system.graphic_objects.object_3d import Object3d
 from system.core.projection import Projection
 from system.core.transformation_handler import TransformationHandler
 from system.core.transformation_handler_3d import TransformationHandler3d
-from gui.logger import Logger
+from gui.widgets.logger import Logger
 from system.obj_file.obj_transcriber import ObjTranscriber
 from system.obj_file.obj_reader import ObjReader
 from utils.utils import get_object_center
