@@ -40,7 +40,8 @@ class BezierCurve3d(GraphicObject3d):
                     Gby[ik][jk] = coordinate[1]
                     Gbz[ik][jk] = coordinate[2]
             for s in np.arange(0, 1 + pace, pace):
-                self.n += 1
+                if k == 0:
+                    self.n += 1
                 S = np.array([s ** 3, s ** 2, s, 1])
                 SMb = np.dot(S, self.Mb)
                 for t in np.arange(0, 1 + pace, pace):

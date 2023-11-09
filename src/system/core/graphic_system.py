@@ -174,6 +174,8 @@ class GraphicSystem:
                 self.display_file.append(Point3d(name, color, x, y, z))
             case GraphicObjectType.OBJECT_3D:
                 self.display_file.append(Object3d(name, color, points_list))
+            case GraphicObjectType.BEZIER_CURVE_3D:
+                self.display_file.append(BezierCurve3d(name, color, points_list))
 
         self.draw_display_file()
 
