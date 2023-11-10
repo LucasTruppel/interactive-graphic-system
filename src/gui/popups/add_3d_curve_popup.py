@@ -8,7 +8,6 @@ from system.core.graphic_system import GraphicSystem
 from system.graphic_objects.graphic_object import GraphicObjectType
 from gui.style import BG_COLOR
 from gui.widgets.logger import Logger
-from utils.utils import format_point_list
 from gui.widgets.custom_button import CustomButton
 
 
@@ -24,6 +23,8 @@ class Add3DCurvePopup:
         self.popup_window.attributes("-topmost", True)
         self.matrices = []
         self.last_matrix = 0
+        self.combobox = None
+        self.type_var = None
         self.init_popup(self.popup_window)
 
     def init_popup(self, popup_window) -> None:
@@ -68,6 +69,14 @@ class Add3DCurvePopup:
         name_entry = EntryWithPlaceholder(name_and_color_frame, "Name")
         name_entry.pack(side=LEFT, fill=X, expand=True)
 
+        self.type_var = StringVar()
+        self.combobox = ttk.Combobox(
+            name_and_color_frame, textvariable=self.type_var, state="readonly")
+        self.combobox["values"] = (GraphicObjectType.BEZIER_CURVE_3D, GraphicObjectType.B_SPLINE_CURVE_3D)
+        self.combobox.bind("<<ComboboxSelected>>", lambda x: self.clear(matrices_listbox))
+        self.combobox.current(0)
+        self.combobox.pack(side=LEFT, padx=5)
+
         color_entry = Entry()
         color_entry.insert(0, "#000000")
         color_canvas = Canvas(name_and_color_frame, width=30,
@@ -92,16 +101,22 @@ class Add3DCurvePopup:
             popup_buttons_frame, text="Cancel", command=popup_window.destroy, button_type='red_button')
         cancel_button.pack(side=LEFT)
 
-    def add_curve(self,
-                  matrix_entry: TextWithPlaceholder, matrices_listbox: Listbox) -> None:
+    def add_curve(self, matrix_entry: TextWithPlaceholder, matrices_listbox: Listbox) -> None:
+        if self.type_var.get() == GraphicObjectType.B_SPLINE_CURVE_3D and len(self.matrices) > 0:
+            messagebox.showerror(parent=self.popup_window,
+                                 title="Error",
+                                 message=f"B spline curve must have only one matrix.")
+            return
         if not (matrix_entry.validate()):
             return
-        coords, valid = self.get_coords_from_string(matrix_entry.get_value())
+        if self.type_var.get() == GraphicObjectType.BEZIER_CURVE_3D:
+            coords, valid = self.parse_bezier_string(matrix_entry.get_value())
+        else:
+            coords, valid = self.parse_bspline_string(matrix_entry.get_value())
         if not valid:
             messagebox.showerror(parent=self.popup_window,
                                  title="Error",
-                                 message=f"Invaldid matrix string. The matrix must be 4x4 and the string must follow "
-                                         f"this example:\n"
+                                 message=f"Invalid {self.type_var.get()} matrix string. The matrix string must follow this example:\n"
                                          f"(x_11,y_11,z_11),(x_12,y_12,z_12),...;(x_21,y_21,z_21),(x_22,y_22,z_22),"
                                          f"...;...(x_ij,y_ij,z_ij)")
             return
@@ -109,10 +124,10 @@ class Add3DCurvePopup:
         self.last_matrix += 1
         matrices_listbox.insert("end",
                                 f"Matrix {self.last_matrix}:    "
-                                f"First point: {coords[0]}    Last point: {coords[-1]}")
+                                f"First point: {coords[0][0]}    Last point: {coords[-1][-1]}")
         matrix_entry.clear()
 
-    def get_coords_from_string(self, matrix_str: str) -> tuple[list[tuple[float, float, float]], bool]:
+    def parse_bezier_string(self, matrix_str: str) -> tuple[list, bool]:
         try:
             coords = []
             matrix_str = matrix_str.strip()
@@ -123,10 +138,34 @@ class Add3DCurvePopup:
                 line = line.split("),")
                 if len(line) != 4:
                     return [], False
+                new_line = []
                 for coord_str in line:
                     values = coord_str.strip("()").split(",")
                     coords_tuple = tuple(float(value) for value in values)
-                    coords.append(coords_tuple)
+                    new_line.append(coords_tuple)
+                coords.append(new_line)
+            return coords, True
+        except Exception:
+            return [], False
+
+    def parse_bspline_string(self, matrix_str: str) -> tuple[list, bool]:
+        try:
+            coords = []
+            matrix_str = matrix_str.strip()
+            lines = matrix_str.split(";")
+            size = len(lines)
+            if size < 4 or size > 20:
+                return [], False
+            for line in lines:
+                line = line.split("),")
+                if len(line) != size:
+                    return [], False
+                new_line = []
+                for coord_str in line:
+                    values = coord_str.strip("()").split(",")
+                    coords_tuple = tuple(float(value) for value in values)
+                    new_line.append(coords_tuple)
+                coords.append(new_line)
             return coords, True
         except Exception:
             return [], False
@@ -163,14 +202,16 @@ class Add3DCurvePopup:
         if not name_entry.validate(False):
             return
         name = name_entry.get()
-        points_list = []
-        for matrix in self.matrices:
-            points_list.extend(matrix)
+        curve_type = self.type_var.get()
         self.graphic_system.create_shape(
-            points_list, name, color_entry.get(), False, GraphicObjectType.BEZIER_CURVE_3D)
+            self.matrices, name, color_entry.get(), False, curve_type)
         popup_window.destroy()
         self.items_listbox.insert(
-            "end", f"{GraphicObjectType.BEZIER_CURVE_3D}: {name}")
+            "end", f"{curve_type}: {name}")
         self.items_dimensions_list.append(True)
         self.logger.log(
-            f'Shape "{name}" created with points: {format_point_list(points_list)}.')
+            f'Shape "{name}" created.')
+
+    def clear(self, matrices_listbox: Listbox) -> None:
+        matrices_listbox.delete("0", "end")
+        self.matrices = []

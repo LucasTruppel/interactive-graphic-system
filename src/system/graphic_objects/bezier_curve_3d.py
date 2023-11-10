@@ -27,15 +27,14 @@ class BezierCurve3d(GraphicObject3d):
             points.append(Point3d("", point.color, point.x, point.y, point.z))
         return BezierCurve3d(self.name, self.color, points, False, self.n)
 
-    def __define_points(self, coordinates_list: list[tuple[float, float, float]]) -> None:
+    def __define_points(self, matrices_list: list[list[list[tuple[float, float, float]]]]) -> None:
         pace = 0.1
-        for k in range(0, len(coordinates_list), 16):
-            if k + 15 > len(coordinates_list) - 1:
-                break
+        for k in range(len(matrices_list)):
+            coordinates_matrix = matrices_list[k]
             Gbx, Gby, Gbz = np.zeros((4, 4)), np.zeros((4, 4)), np.zeros((4, 4))
             for ik in range(4):
                 for jk in range(4):
-                    coordinate = coordinates_list[ik*4 + jk + k]
+                    coordinate = coordinates_matrix[ik][jk]
                     Gbx[ik][jk] = coordinate[0]
                     Gby[ik][jk] = coordinate[1]
                     Gbz[ik][jk] = coordinate[2]

@@ -43,7 +43,7 @@ class GraphicSystem:
         self.projection_state = ProjectionState.PERSPECTIVE
         self.cop = Point3d("cop", "#FFFFFF", 0, 0, -250)
 
-        self.test()
+        # self.test()
 
     def draw_display_file(self) -> None:
         self.window.update_normalization_matrix()
@@ -156,7 +156,7 @@ class GraphicSystem:
         self.window.zoom_out()
         self.draw_display_file()
 
-    def create_shape(self, points_list: list[tuple], name: str, color: str, fill: bool,
+    def create_shape(self, points_list: list, name: str, color: str, fill: bool,
                      object_type: str) -> None:
         match object_type:
             case GraphicObjectType.POINT:
@@ -179,6 +179,8 @@ class GraphicSystem:
                 self.display_file.append(Object3d(name, color, points_list))
             case GraphicObjectType.BEZIER_CURVE_3D:
                 self.display_file.append(BezierCurve3d(name, color, points_list))
+            case GraphicObjectType.B_SPLINE_CURVE_3D:
+                self.display_file.append(BSpline3d(name, color, points_list[0]))
 
         self.draw_display_file()
 
@@ -268,10 +270,10 @@ class GraphicSystem:
         self.draw_display_file()
 
     def test(self):
-        curve_coord = [(0, 0, 0), (33, 50, 0), (66, 50, 0), (100, 0, 0),
-                       (0, 0, 33), (33, 50, 33), (66, 50, 33), (100, 0, 33),
-                       (0, 0, 66), (33, 50, 66), (66, 50, 66), (100, 0, 66),
-                       (0, 0, 100), (33, 50, 100), (66, 50, 100), (100, 0, 100)]
+        curve_coord = [[[(0, 0, 0), (33, 50, 0), (66, 50, 0), (100, 0, 0)],
+                       [(0, 0, 33), (33, 50, 33), (66, 50, 33), (100, 0, 33)],
+                       [(0, 0, 66), (33, 50, 66), (66, 50, 66), (100, 0, 66)],
+                       [(0, 0, 100), (33, 50, 100), (66, 50, 100), (100, 0, 100)]]]
         curve_coord2 = \
             [[(0, 0, 0), (33, 50, 0), (66, 50, 0), (100, 100, 0), (133, 100, 0), (166, 50, 0), (200, 50, 0),
               (233, 0, 0)],
@@ -308,10 +310,10 @@ class GraphicSystem:
         y_axis_cords = [(0, 0, 0), (0, 1000, 0)]
         z_axis_cords = [(0, 0, 0), (0, 0, 1000)]
         self.display_file.append(BSpline3d("", "#000000", curve_coord2))
-        # self.display_file.append(Object3d("", "#000000", cube_coords))
+        self.display_file.append(Object3d("", "#000000", cube_coords))
         self.display_file.append(BezierCurve3d("", "#000000", curve_coord))
-        # self.display_file.append(Object3d("", "#000000", x_axis_cords))
-        # self.display_file.append(Object3d("", "#000000", y_axis_cords))
-        # self.display_file.append(Object3d("", "#000000", z_axis_cords))
-        # self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
+        self.display_file.append(Object3d("", "#000000", x_axis_cords))
+        self.display_file.append(Object3d("", "#000000", y_axis_cords))
+        self.display_file.append(Object3d("", "#000000", z_axis_cords))
+        self.display_file.append(Point3d("", "#000000", 1000, 1000, 0))
         self.draw_display_file()

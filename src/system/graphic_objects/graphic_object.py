@@ -33,3 +33,4 @@ class GraphicObjectType:
     POINT_3D = "3d Point"
     OBJECT_3D = "3d Object"
     BEZIER_CURVE_3D = "3d Bezier Curve"
+    B_SPLINE_CURVE_3D = "3d B-Spline Curve"
